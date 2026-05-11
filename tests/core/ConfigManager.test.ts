@@ -13,32 +13,32 @@ describe("ConfigManager", () => {
 			get: mock((key) => Promise.resolve(storage[key] || null)),
 		};
 		const manager = new ConfigManager(redis);
-		const config = {
-			clientId: "id",
-			clientSecret: "secret",
-			authUrl: "https://auth.com",
-			tokenUrl: "https://token.com",
-			scope: "all",
+		const traktConfig = {
+			clientId: "trakt-client-id",
+			clientSecret: "trakt-client-secret",
+			authUrl: "https://trakt.tv/oauth/authorize",
+			tokenUrl: "https://api.trakt.tv/oauth/token",
+			scope: "public",
 		};
 
-		await manager.setProviderConfig("test", config);
-		const retrieved = await manager.getProviderConfig("test");
+		await manager.setProviderConfig("trakt", traktConfig);
+		const retrieved = await manager.getProviderConfig("trakt");
 
-		expect(retrieved).toEqual(config);
+		expect(retrieved).toEqual(traktConfig);
 		expect(redis.set).toHaveBeenCalled();
 	});
 
 	it("should return all providers", async () => {
 		const redis = {
-			keys: mock(() => Promise.resolve(["config:p1", "config:p2"])),
+			keys: mock(() => Promise.resolve(["config:trakt", "config:github"])),
 			get: mock((key) =>
 				Promise.resolve(
 					JSON.stringify({
-						clientId: key,
-						clientSecret: "s",
-						authUrl: "https://a.com",
-						tokenUrl: "https://t.com",
-						scope: "x",
+						clientId: `${key}-id`,
+						clientSecret: "secret",
+						authUrl: "https://auth.com",
+						tokenUrl: "https://token.com",
+						scope: "all",
 					}),
 				),
 			),
@@ -48,14 +48,14 @@ describe("ConfigManager", () => {
 		const providers = await manager.getAllProviders();
 
 		expect(Object.keys(providers)).toHaveLength(2);
-		expect(providers.p1.clientId).toBe("config:p1");
+		expect(providers.trakt.clientId).toBe("config:trakt-id");
 	});
 
 	it("should return null for non-existent provider", async () => {
 		const redis = { get: mock(() => Promise.resolve(null)) };
 		const manager = new ConfigManager(redis);
 
-		const config = await manager.getProviderConfig("missing");
+		const config = await manager.getProviderConfig("missing-provider");
 
 		expect(config).toBeNull();
 	});
