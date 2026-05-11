@@ -65,6 +65,8 @@ app.onError((err, c) => {
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
+export { app };
+
 export default {
 	port: Number.parseInt(config.PORT, 10),
 	fetch: app.fetch,
