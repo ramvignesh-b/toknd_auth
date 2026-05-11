@@ -15,7 +15,7 @@ app.use("*", prettyJSON());
 app.route("/auth", authRoutes);
 app.route("/api/config", configRoutes);
 app.route("/api", apiRoutes);
-app.route("/dashboard", dashboardRoutes);
+app.route("/app", dashboardRoutes);
 
 app.notFound((c) => {
 	console.error(`[404 Not Found] ${c.req.method} ${c.req.url}`);

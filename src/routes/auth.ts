@@ -84,7 +84,7 @@ authRoutes.get("/callback", async (c) => {
 						<h2 class="card-title text-2xl font-bold">Authenticated!</h2>
 						<p class="opacity-70 mt-2">Successfully connected to <strong>${providerName}</strong>.</p>
 						<div class="card-actions mt-6">
-							<a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+							<a href="/app" class="btn btn-primary">Go to Dashboard</a>
 						</div>
 					</div>
 				</div>

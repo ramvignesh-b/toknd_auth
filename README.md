@@ -94,7 +94,7 @@ All API requests except for the initial OAuth login and callback require an `Aut
 ## Dashboard
 
 The service includes a basic dashboard for managing configurations:
-- **URL**: `http://localhost:3000/dashboard/`
+- **URL**: `http://localhost:3000/app/`
 
 ## Extensibility Guide
 
