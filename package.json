@@ -10,7 +10,9 @@
 		"prepare": "husky"
 	},
 	"dependencies": {
+		"@hono/zod-openapi": "^1.4.0",
 		"@phosphor-icons/core": "^2.1.1",
+		"@scalar/hono-api-reference": "^0.10.14",
 		"hono": "^4.12.18",
 		"ioredis": "^5.10.1",
 		"zod": "^4.4.3"
