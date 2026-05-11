@@ -429,7 +429,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 													type="button"
 													x-on:click="forceRefresh(provider.name)"
 													class="btn btn-base w-full"
-													x-bind:disabled="loading"
+													x-bind:disabled="loading || !provider.status.accessToken"
 												>
 													<i class="ph-bold ph-arrows-clockwise text-base mr-1"></i>
 													<span class="text-xs uppercase font-bold tracking-widest">
