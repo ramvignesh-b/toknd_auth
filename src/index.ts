@@ -13,7 +13,7 @@ import { dashboardRoutes } from "./routes/dashboard";
 const app = new OpenAPIHono({ strict: false });
 
 // OpenAPI specs
-app.doc("/doc", {
+app.doc("/docs/v1/openapi.json", {
 	openapi: "3.0.0",
 	info: {
 		version: "1.0.0",
@@ -38,13 +38,14 @@ app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", {
 
 // Scalar API Reference
 app.get(
-	"/api",
+	"/docs/v1",
 	Scalar({
 		theme: "solarized",
-		url: "/doc",
+		url: "/docs/v1/openapi.json",
 	}),
 );
-app.get("/docs", (c) => c.redirect("/api"));
+app.get("/docs", (c) => c.redirect("/docs/v1"));
+app.get("/api", (c) => c.redirect("/docs/v1"));
 
 app.use("*", logger());
 app.use("*", prettyJSON());

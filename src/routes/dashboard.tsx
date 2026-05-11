@@ -64,7 +64,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 
 				<nav class="hidden md:flex items-center gap-1">
 					<a
-						href="/docs"
+						href="/docs/v1"
 						target="_blank"
 						class="btn btn-ghost btn-sm text-base-content/60 hover:text-primary gap-2 px-3"
 						rel="noopener"
