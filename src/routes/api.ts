@@ -9,6 +9,20 @@ const apiRoutes = new Hono({ strict: false });
 
 apiRoutes.use("*", authMiddleware);
 
+apiRoutes.get("/status", async (c) => {
+	const configManager = new ConfigManager(redis);
+	const providers = await configManager.getAllProviders();
+	const status: Record<string, { accessToken: string | null; refreshToken: string | null }> = {};
+
+	for (const provider of Object.keys(providers)) {
+		const accessToken = await redis.get(`provider:${provider}:access_token`);
+		const refreshToken = await redis.get(`provider:${provider}:refresh_token`);
+		status[provider] = { accessToken, refreshToken };
+	}
+
+	return c.json(status);
+});
+
 apiRoutes.get("/token/:provider", async (c) => {
 	const providerName = c.req.param("provider");
 	const configManager = new ConfigManager(redis);

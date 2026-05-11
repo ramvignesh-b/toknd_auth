@@ -9,6 +9,9 @@ services:
       - API_KEY=${API_KEY}
     depends_on:
       - redis
+    volumes:
+      - ./node_modules:/app/node_modules
+      - ./src:/app/src:z
 
   redis:
     image: redis:alpine

@@ -10,8 +10,14 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
     <style>
-        .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-        .ph { font-size: 1.25rem; vertical-align: middle; }
+        .font-mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .ph {
+            font-size: 1.25rem;
+            vertical-align: middle;
+        }
     </style>
 </head>
 
@@ -19,10 +25,12 @@
     <div class="navbar bg-base-100 shadow-sm px-4 md:px-8 border-b border-base-300">
         <div class="flex-1">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-bold text-lg">
+                <div
+                    class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-bold text-lg">
                     <i class="ph ph-shield-check"></i>
                 </div>
-                <a class="text-xl font-bold tracking-tight">Auth Server <span class="text-xs font-normal opacity-50 ml-1">v1.0</span></a>
+                <a class="text-xl font-bold tracking-tight">Auth Server <span
+                        class="text-xs font-normal opacity-50 ml-1">v1.0</span></a>
             </div>
         </div>
         <div class="flex-none">
@@ -47,44 +55,56 @@
 
                     <form id="configForm" class="space-y-4">
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Provider ID</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Provider
+                                    ID</span></label>
                             <input type="text" id="providerName" placeholder="e.g. trakt" required
                                 class="input input-bordered focus:input-primary" />
                         </div>
 
-                        <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">Credentials</div>
-
-                        <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client ID</span></label>
-                            <input type="text" id="clientId" placeholder="OAuth client id" required class="input input-bordered focus:input-primary" />
-                        </div>
-                        <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client Secret</span></label>
-                            <input type="password" id="clientSecret" placeholder="OAuth client secret" required class="input input-bordered focus:input-primary" />
+                        <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-[10px]">Credentials
                         </div>
 
-                        <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">Endpoints</div>
+                        <div class="form-control">
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client
+                                    ID</span></label>
+                            <input type="text" id="clientId" placeholder="OAuth client id" required
+                                class="input input-bordered focus:input-primary" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client
+                                    Secret</span></label>
+                            <input type="password" id="clientSecret" placeholder="OAuth client secret" required
+                                class="input input-bordered focus:input-primary" />
+                        </div>
+
+                        <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-[10px]">Endpoints
+                        </div>
 
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Auth URL</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Auth
+                                    URL</span></label>
                             <input type="url" id="authUrl" placeholder="https://trakt.tv/oauth/authorize" required
                                 class="input input-bordered focus:input-primary" />
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Token URL</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Token
+                                    URL</span></label>
                             <input type="url" id="tokenUrl" placeholder="https://api.trakt.tv/oauth/token" required
                                 class="input input-bordered focus:input-primary" />
                         </div>
                         <div class="form-control">
                             <label class="label py-1">
                                 <span class="label-text font-semibold opacity-70">Redirect URI</span>
+                                <span class="label-text-alt opacity-50 italic">Optional</span>
                             </label>
-                            <input type="url" id="redirectUri" 
+                            <input type="url" id="redirectUri" placeholder="Auto-generated if empty"
                                 class="input input-bordered focus:input-primary" />
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Scope</span></label>
-                            <input type="text" id="scope" placeholder="public" class="input input-bordered focus:input-primary" />
+                            <label class="label py-1"><span
+                                    class="label-text font-semibold opacity-70">Scope</span></label>
+                            <input type="text" id="scope" placeholder="public"
+                                class="input input-bordered focus:input-primary" />
                         </div>
 
                         <div class="card-actions pt-4">
@@ -97,12 +117,12 @@
                 </div>
             </div>
 
-            <div class="card bg-base-100 shadow-xl border border-base-300 lg:col-span-8">
+            <div class="card bg-base-100 shadow-xl border border-base-300 lg:col-span-8 overflow-hidden">
                 <div class="card-body p-0">
-                    <div class="p-6 pb-0 flex justify-between items-center">
+                    <div class="p-6 pb-4 flex justify-between items-center bg-base-100">
                         <div class="flex items-center gap-2">
                             <div class="w-2 h-6 bg-secondary rounded-full"></div>
-                            <h2 class="card-title text-xl font-bold">Registry</h2>
+                            <h2 class="card-title text-xl font-bold">Provider Registry</h2>
                         </div>
                         <button type="button" onclick="fetchProviders()" class="btn btn-sm btn-ghost border-base-300">
                             <i class="ph ph-arrows-clockwise mr-1"></i>
@@ -110,23 +130,28 @@
                         </button>
                     </div>
 
-                    <div class="divider my-2 opacity-10"></div>
-
                     <div class="overflow-x-auto">
                         <table class="table w-full">
                             <thead>
                                 <tr class="bg-base-200/50">
-                                    <th class="rounded-none font-bold uppercase tracking-wider text-xs opacity-60">Provider</th>
-                                    <th class="font-bold uppercase tracking-wider text-xs opacity-60">Client ID</th>
-                                    <th class="rounded-none text-right font-bold uppercase tracking-wider text-xs opacity-60">Actions</th>
+                                    <th
+                                        class="rounded-none font-bold uppercase tracking-wider text-[10px] opacity-60 px-6">
+                                        Provider</th>
+                                    <th class="font-bold uppercase tracking-wider text-[10px] opacity-60 px-6">Access
+                                        Token</th>
+                                    <th class="font-bold uppercase tracking-wider text-[10px] opacity-60 px-6">Refresh
+                                        Token</th>
+                                    <th
+                                        class="rounded-none text-right font-bold uppercase tracking-wider text-[10px] opacity-60 px-6">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="providerTableBody">
                                 <tr>
-                                    <td colspan="3" class="text-center py-12">
-                                        <div class="flex flex-col items-center gap-2 opacity-40">
-                                            <i class="ph ph-database text-5xl mb-2"></i>
-                                            <p class="font-medium">Enter Master API Key to load registry</p>
+                                    <td colspan="4" class="text-center py-20">
+                                        <div class="flex flex-col items-center gap-3 opacity-30">
+                                            <i class="ph ph-lock-key text-6xl"></i>
+                                            <p class="font-medium">Enter Master API Key to access registry</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -140,7 +165,7 @@
 
     <div class="toast toast-end" id="notificationToast" style="display: none; z-index: 100;">
         <div class="alert shadow-lg border border-base-300">
-            <span id="notificationMessage">Message sent successfully.</span>
+            <span id="notificationMessage"></span>
         </div>
     </div>
 
@@ -148,12 +173,9 @@
         const apiKeyInput = document.getElementById('apiKey');
         const configForm = document.getElementById('configForm');
         const providerTableBody = document.getElementById('providerTableBody');
-        const redirectUriInput = document.getElementById('redirectUri');
-        if (redirectUriInput) {
-            redirectUriInput.value = `${window.location.origin}/auth/callback`;
-        }
 
         let providerData = {};
+        let tokenStatus = {};
 
         function showNotification(message, type = 'success') {
             const toast = document.getElementById('notificationToast');
@@ -174,45 +196,106 @@
             if (!apiKey) return;
 
             try {
-                const response = await fetch('/api/config', {
+                // Fetch Configs
+                const configRes = await fetch('/api/config', {
                     headers: { 'Authorization': `Bearer ${apiKey}` }
                 });
-                if (!response.ok) throw new Error(await response.text());
-                const providers = await response.json();
-                providerData = providers;
+                if (!configRes.ok) throw new Error('Unauthorized or missing API Key');
+                providerData = await configRes.json();
 
-                providerTableBody.innerHTML = '';
-                const entries = Object.entries(providers);
-
-                if (entries.length === 0) {
-                    providerTableBody.innerHTML = '<tr><td colspan="3" class="text-center py-12 opacity-50">No providers configured.</td></tr>';
-                    return;
+                // Fetch Token Status
+                const statusRes = await fetch('/api/status', {
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
+                });
+                if (statusRes.ok) {
+                    tokenStatus = await statusRes.json();
                 }
 
-                for (const [name, config] of entries) {
-                    const row = document.createElement('tr');
-                    row.className = "hover:bg-base-200/50 transition-colors";
-                    row.innerHTML = `
-                        <td class="font-bold text-base-content/80">${name}</td>
-                        <td><code class="text-xs bg-base-200 px-2 py-1 rounded-md font-mono">${config.clientId}</code></td>
-                        <td class="text-right">
-                            <div class="flex gap-2 justify-end">
-                                <a href="/auth/${name}/login" target="_blank" class="btn btn-xs btn-primary">
-                                    <i class="ph ph-link"></i> Connect
-                                </a>
-                                <button type="button" onclick="window.editProvider('${name}')" class="btn btn-xs btn-outline">
-                                    <i class="ph ph-pencil-simple"></i> Edit
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    providerTableBody.appendChild(row);
-                }
+                renderTable();
             } catch (error) {
-                console.error('Error fetching providers:', error);
-                providerTableBody.innerHTML = `<tr><td colspan="3" class="text-center text-error py-8">Failed to load: ${error.message}</td></tr>`;
+                console.error('Error:', error);
+                providerTableBody.innerHTML = `<tr><td colspan="4" class="text-center text-error py-12 font-medium">${error.message}</td></tr>`;
             }
         }
+
+        function renderTable() {
+            providerTableBody.innerHTML = '';
+            const entries = Object.entries(providerData);
+
+            if (entries.length === 0) {
+                providerTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-16 opacity-50 font-medium italic">No providers configured yet.</td></tr>';
+                return;
+            }
+
+            for (const [name, config] of entries) {
+                const status = tokenStatus[name] || { accessToken: null, refreshToken: null };
+                const row = document.createElement('tr');
+                row.className = "hover:bg-base-200/30 transition-colors group";
+
+                row.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-base-content/90">${name}</span>
+                            <span class="text-[10px] opacity-40 font-mono truncate max-w-[120px]" title="${config.clientId}">${config.clientId}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">${renderTokenCell(name, 'access', status.accessToken)}</td>
+                    <td class="px-6 py-4">${renderTokenCell(name, 'refresh', status.refreshToken)}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                            <a href="/auth/${name}/login" target="_blank" class="btn btn-xs btn-primary shadow-sm" title="Authenticate">
+                                <i class="ph ph-link"></i> Connect
+                            </a>
+                            <button type="button" onclick="window.editProvider('${name}')" class="btn btn-xs btn-outline" title="Edit Config">
+                                <i class="ph ph-pencil-simple"></i> Edit
+                            </button>
+                        </div>
+                    </td>
+                `;
+                providerTableBody.appendChild(row);
+            }
+        }
+
+        function renderTokenCell(provider, type, value) {
+            if (!value) {
+                return `<span class="badge badge-sm badge-ghost opacity-40 italic">Not Authed</span>`;
+            }
+            const id = `token-${provider}-${type}`;
+            return `
+                <div class="flex items-center gap-2">
+                    <div class="relative flex items-center">
+                        <input type="password" id="${id}" value="${value}" readonly
+                            class="input input-xs bg-base-200/50 border-none font-mono text-[10px] w-24 pr-8 focus:outline-none" />
+                        <button onclick="window.toggleToken('${id}')" class="absolute right-1 text-base-content/40 hover:text-primary transition-colors">
+                            <i class="ph ph-eye-slash text-xs" id="eye-${id}"></i>
+                        </button>
+                    </div>
+                    <button onclick="window.copyToken('${value}')" class="btn btn-square btn-ghost btn-xs text-base-content/40 hover:text-primary transition-colors">
+                        <i class="ph ph-copy-simple"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        window.toggleToken = (id) => {
+            const input = document.getElementById(id);
+            const eye = document.getElementById(`eye-${id}`);
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.className = 'ph ph-eye text-xs';
+            } else {
+                input.type = 'password';
+                eye.className = 'ph ph-eye-slash text-xs';
+            }
+        };
+
+        window.copyToken = (value) => {
+            navigator.clipboard.writeText(value).then(() => {
+                showNotification('Token copied to clipboard!');
+            }).catch(_err => {
+                showNotification('Failed to copy token', 'error');
+            });
+        };
 
         window.editProvider = (name) => {
             const config = providerData[name];
@@ -223,7 +306,7 @@
             document.getElementById('clientSecret').value = config.clientSecret;
             document.getElementById('authUrl').value = config.authUrl;
             document.getElementById('tokenUrl').value = config.tokenUrl;
-            document.getElementById('redirectUri').value = config.redirectUri || `${window.location.origin}/auth/callback`;
+            document.getElementById('redirectUri').value = config.redirectUri || '';
             document.getElementById('scope').value = config.scope;
 
             document.getElementById('configForm').scrollIntoView({ behavior: 'smooth' });
@@ -263,9 +346,6 @@
                 showNotification('Configuration saved successfully!');
                 fetchProviders();
                 configForm.reset();
-                if (redirectUriInput) {
-                    redirectUriInput.value = `${window.location.origin}/auth/callback`;
-                }
             } catch (error) {
                 console.error('Error saving config:', error);
                 showNotification(error.message, 'error');
