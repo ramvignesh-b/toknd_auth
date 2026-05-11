@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Hono } from "hono";
 
-const dashboardRoutes = new Hono();
+const dashboardRoutes = new Hono({ strict: false });
 
 dashboardRoutes.get("/", async (c) => {
 	try {

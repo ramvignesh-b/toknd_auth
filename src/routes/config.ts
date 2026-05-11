@@ -3,7 +3,7 @@ import { ConfigManager, ProviderConfigSchema } from "../core/ConfigManager";
 import { redis } from "../core/RedisClient";
 import { authMiddleware } from "../middleware/auth";
 
-const configRoutes = new Hono();
+const configRoutes = new Hono({ strict: false });
 
 configRoutes.use("*", authMiddleware);
 

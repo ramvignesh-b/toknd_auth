@@ -5,7 +5,7 @@ import { TokenManager } from "../core/TokenManager";
 import { authMiddleware } from "../middleware/auth";
 import { GenericProvider } from "../providers/GenericProvider";
 
-const apiRoutes = new Hono();
+const apiRoutes = new Hono({ strict: false });
 
 apiRoutes.use("*", authMiddleware);
 
