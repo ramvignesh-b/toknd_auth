@@ -389,12 +389,19 @@
                             <span class="text-xs font-medium opacity-60">${formatTimeAgo(status.lastUpdated)}</span>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <a href="/auth/${name}/login" target="_blank" class="btn btn-primary btn-sm flex-1 shadow-sm">
-                                <i class="ph-bold ph-link"></i> Connect
-                            </a>
-                            <button type="button" onclick="window.editProvider('${name}')" class="btn btn-outline btn-sm flex-1">
-                                <i class="ph-bold ph-pencil-simple"></i> Edit
+                        <div class="flex flex-col gap-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="/auth/${name}/login" target="_blank" class="btn btn-primary btn-sm shadow-sm">
+                                    <i class="ph-bold ph-link"></i> Connect
+                                </a>
+                                <button type="button" onclick="window.editProvider('${name}')" class="btn btn-outline btn-sm">
+                                    <i class="ph-bold ph-pencil-simple"></i> Edit
+                                </button>
+                            </div>
+                            <button type="button" onclick="window.forceRefresh('${name}')" id="btn-refresh-${name}"
+                                class="btn btn-ghost btn-sm border border-base-300 w-full">
+                                <i class="ph-duotone ph-arrows-clockwise text-base mr-1" id="icon-refresh-${name}"></i> 
+                                <span class="text-[10px] uppercase font-bold tracking-wider">Manual Refresh</span>
                             </button>
                         </div>
                     </div>
@@ -458,6 +465,36 @@
 
             document.getElementById('configForm').scrollIntoView({ behavior: 'smooth' });
             document.getElementById('providerName').focus();
+        };
+
+        window.forceRefresh = async (name) => {
+            const apiKey = apiKeyInput.value.trim();
+            const btn = document.getElementById(`btn-refresh-${name}`);
+            const icon = document.getElementById(`icon-refresh-${name}`);
+
+            if (btn) btn.classList.add('btn-disabled', 'opacity-50');
+            if (icon) icon.classList.add('animate-spin');
+
+            try {
+                const response = await fetch(`/api/refresh/${name}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Refresh failed');
+
+                showNotification(`${name} tokens refreshed successfully!`);
+                // Update local data and re-render
+                tokenStatus[name] = data.status;
+                renderRegistry();
+            } catch (error) {
+                console.error('Refresh error:', error);
+                showNotification(error.message, 'error');
+            } finally {
+                if (btn) btn.classList.remove('btn-disabled', 'opacity-50');
+                if (icon) icon.classList.remove('animate-spin');
+            }
         };
 
         configForm.addEventListener('submit', async (e) => {

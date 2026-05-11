@@ -4,7 +4,7 @@ import type { OAuthProvider, TokenResponse } from "./interface";
 
 const TokenResponseSchema = z.object({
 	access_token: z.string(),
-	refresh_token: z.string(),
+	refresh_token: z.string().optional(),
 	expires_in: z.number(),
 });
 
@@ -49,6 +49,10 @@ export class GenericProvider implements OAuthProvider {
 		const rawData = await response.json();
 		const data = TokenResponseSchema.parse(rawData);
 
+		if (!data.refresh_token) {
+			throw new Error("Provider did not return a refresh token during initial exchange.");
+		}
+
 		return {
 			accessToken: data.access_token,
 			refreshToken: data.refresh_token,
@@ -81,7 +85,7 @@ export class GenericProvider implements OAuthProvider {
 
 		return {
 			accessToken: data.access_token,
-			refreshToken: data.refresh_token,
+			refreshToken: data.refresh_token || refreshToken, // Fallback to current token if provider doesn't rotate it
 			expiresIn: data.expires_in,
 		};
 	}

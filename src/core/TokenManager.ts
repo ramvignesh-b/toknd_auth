@@ -21,7 +21,7 @@ export class TokenManager {
 		return tokens.accessToken;
 	}
 
-	async forceRefresh(providerName: string): Promise<string | null> {
+	async refreshAccessToken(providerName: string): Promise<string | null> {
 		const refreshKey = `provider:${providerName}:refresh_token`;
 		const refreshToken = await this.redis.get(refreshKey);
 		if (!refreshToken) return null;
