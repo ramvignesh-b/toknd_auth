@@ -35,6 +35,17 @@ describe("API Integration", () => {
 		expect(body.status).toBe("ok");
 	});
 
+	it("should return 503 for health check if redis is down", async () => {
+		redis.status = "connecting";
+
+		const res = await app.request("/health");
+		const body = await res.json();
+
+		expect(res.status).toBe(503);
+		expect(body.status).toBe("error");
+		expect(body.redis).toBe("connecting");
+	});
+
 	it("should return 200 for status with valid API Key", async () => {
 		redis.keys.mockReturnValue(Promise.resolve(["config:trakt"]));
 		redis.get.mockImplementation((key) => {

@@ -66,7 +66,7 @@ app.onError((err, c) => {
 
 app.get("/health", async (c) => {
 	if (redis.status !== "ready") {
-		return c.json({ status: "error", message: "Redis down" }, 503);
+		return c.json({ status: "error", message: "Redis down", redis: redis.status }, 503);
 	}
 	return c.json({ status: "ok" });
 });

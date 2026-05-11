@@ -8,8 +8,10 @@ process.env.PORT = "3000";
 // Global Redis mock
 mock.module("../src/core/RedisClient", () => ({
 	redis: {
+		status: "ready",
 		get: mock(() => Promise.resolve(null)),
 		set: mock(() => Promise.resolve()),
 		keys: mock(() => Promise.resolve([])),
+		on: mock(() => {}),
 	},
 }));
