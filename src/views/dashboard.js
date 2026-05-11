@@ -151,13 +151,41 @@ document.addEventListener("alpine:init", () => {
 				});
 
 				if (res.status === 401) {
-					this.isUnlocked = false;
-					throw new Error("Session expired");
+					return this.handleSessionExpired();
 				}
 
 				if (!res.ok) throw new Error("Refresh failed");
 
 				this.showNotification(`Refreshed ${name}`);
+				await this.fetchProviders();
+			} catch (err) {
+				this.showNotification(err.message, "error");
+			} finally {
+				this.loading = false;
+			}
+		},
+
+		async deleteProvider(name) {
+			if (
+				!confirm(
+					`Are you sure you want to delete ${name}? This will also remove all associated tokens.`,
+				)
+			)
+				return;
+
+			this.loading = true;
+			try {
+				const res = await fetch(`/api/config/${name}`, {
+					method: "DELETE",
+				});
+
+				if (res.status === 401) {
+					return this.handleSessionExpired();
+				}
+
+				if (!res.ok) throw new Error("Delete failed");
+
+				this.showNotification(`Deleted ${name}`);
 				await this.fetchProviders();
 			} catch (err) {
 				this.showNotification(err.message, "error");

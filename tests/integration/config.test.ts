@@ -78,4 +78,18 @@ describe("Config Integration", () => {
 
 		expect(res.status).toBe(400);
 	});
+
+	it("should delete a provider configuration", async () => {
+		redis.del.mockImplementation(() => Promise.resolve(1));
+
+		const res = await app.request("/api/config/trakt", {
+			method: "DELETE",
+			headers: {
+				Authorization: "Bearer test-api-key",
+			},
+		});
+
+		expect(res.status).toBe(200);
+		expect(redis.del).toHaveBeenCalled();
+	});
 });

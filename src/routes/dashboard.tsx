@@ -308,10 +308,20 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 									<div class="card bg-base-200/50 border border-base-300 shadow-sm hover:shadow-md transition-all group">
 										<div class="card-body p-5">
 											<div class="flex flex-col mb-4">
-												<span
-													x-text="provider.name"
-													class="text-lg font-black text-base-content/90 uppercase"
-												></span>
+												<div class="flex justify-between items-start">
+													<span
+														x-text="provider.name"
+														class="text-lg font-black text-base-content/90 uppercase"
+													></span>
+													<button
+														type="button"
+														x-on:click="deleteProvider(provider.name)"
+														class="btn btn-error btn-xs mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300"
+														title="Delete Provider"
+													>
+														<i class="ph-bold ph-trash text-lg"></i>
+													</button>
+												</div>
 												<span
 													x-text="provider.config.clientId"
 													x-bind:title="provider.config.clientId"

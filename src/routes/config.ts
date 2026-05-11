@@ -70,6 +70,23 @@ const setConfigRoute = createRoute({
 	},
 });
 
+const deleteConfigRoute = createRoute({
+	method: "delete",
+	path: "/{provider}",
+	security: [{ API_KEY: [] }],
+	request: {
+		params: z.object({
+			provider: z.string().openapi({ example: "trakt" }),
+		}),
+	},
+	responses: {
+		200: {
+			content: { "application/json": { schema: SuccessMessage } },
+			description: "Delete a provider configuration and its tokens",
+		},
+	},
+});
+
 // Implementations
 configRoutes.use("*", authMiddleware);
 
@@ -86,6 +103,14 @@ configRoutes.openapi(setConfigRoute, async (c) => {
 
 	await configManager.setProviderConfig(provider, body);
 	return c.json({ message: `Config for ${provider} saved successfully` }, 200);
+});
+
+configRoutes.openapi(deleteConfigRoute, async (c) => {
+	const provider = c.req.valid("param").provider;
+	const configManager = new ConfigManager(redis);
+
+	await configManager.deleteProviderConfig(provider);
+	return c.json({ message: `Config for ${provider} deleted successfully` }, 200);
 });
 
 export { configRoutes };

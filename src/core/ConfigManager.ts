@@ -40,4 +40,13 @@ export class ConfigManager {
 
 		return result;
 	}
+
+	async deleteProviderConfig(provider: string): Promise<void> {
+		await this.redis.del(`config:${provider}`);
+		// Also clean up tokens
+		const tokenKeys = await this.redis.keys(`provider:${provider}:*`);
+		if (tokenKeys.length > 0) {
+			await this.redis.del(...tokenKeys);
+		}
+	}
 }
