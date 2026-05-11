@@ -1,7 +1,5 @@
 // @ts-nocheck
 import { afterEach, describe, expect, it, mock } from "bun:test";
-import { redis } from "../../src/core/RedisClient";
-import { app } from "../../src/index";
 
 mock.module("../../src/core/RedisClient", () => ({
 	redis: {
@@ -11,13 +9,8 @@ mock.module("../../src/core/RedisClient", () => ({
 	},
 }));
 
-mock.module("../../src/config", () => ({
-	config: {
-		API_KEY: "test-api-key",
-		PORT: "3000",
-		REDIS_URL: "redis://localhost:6379",
-	},
-}));
+import { redis } from "../../src/core/RedisClient";
+import { app } from "../../src/index";
 
 describe("API Integration", () => {
 	afterEach(() => {
