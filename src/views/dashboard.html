@@ -33,13 +33,24 @@
                         class="text-xs font-normal opacity-50 ml-1">v1.0</span></a>
             </div>
         </div>
-        <div class="flex-none">
-            <div class="join shadow-sm border border-base-300">
-                <div class="join-item bg-base-200 px-3 flex items-center border-r border-base-300">
-                    <i class="ph ph-key opacity-70"></i>
+        <div class="flex-none hidden sm:flex">
+            <div class="join shadow-inner bg-base-200/50 border border-base-300 rounded-xl overflow-hidden transition-all focus-within:ring-2 focus-within:ring-primary/20">
+                <div class="join-item flex items-center px-4 border-r border-base-300/50 bg-base-100">
+                    <i class="ph-duotone ph-key text-primary text-lg animate-pulse-slow"></i>
                 </div>
-                <input type="password" id="apiKey" placeholder="Master API Key"
-                    class="input join-item input-sm focus:outline-none w-32 md:w-64" />
+                <div class="relative flex-1">
+                    <input type="password" id="apiKey" placeholder="Unlock Registry..."
+                        class="input join-item input-sm bg-transparent border-none focus:outline-none focus:ring-0 w-48 lg:w-64 font-mono text-xs pr-10" />
+                    <button type="button" onclick="window.toggleToken('apiKey')" 
+                        class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square">
+                        <i class="ph-duotone ph-eye text-base opacity-50" id="eye-apiKey"></i>
+                    </button>
+                </div>
+                <button onclick="fetchProviders()" type="button"
+                    class="btn btn-primary btn-sm join-item px-6 hover:brightness-110 active:scale-95 transition-all">
+                    <i class="ph-duotone ph-lock-key-open text-lg"></i>
+                    <span class="ml-1 hidden md:inline">Enter Key</span>
+                </button>
             </div>
         </div>
     </div>
@@ -90,12 +101,18 @@
                                     Client Secret
                                     <div class="tooltip tooltip-top"
                                         data-tip="Found next to the Client ID. This is your private key—never share it or put it in client-side code.">
-                                        <i class="ph ph-info opacity-50 cursor-help"></i>
+                                        <i class="ph-duotone ph-info opacity-50 cursor-help"></i>
                                     </div>
                                 </span>
                             </label>
-                            <input type="password" id="clientSecret" placeholder="OAuth client secret" required
-                                class="input input-bordered w-full focus:input-primary" />
+                            <div class="relative">
+                                <input type="password" id="clientSecret" placeholder="OAuth client secret" required
+                                    class="input input-bordered w-full focus:input-primary pr-12" />
+                                <button type="button" onclick="window.toggleToken('clientSecret')" 
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square">
+                                    <i class="ph-duotone ph-eye text-lg opacity-40" id="eye-clientSecret"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-[10px]">Endpoints
@@ -186,39 +203,14 @@
                             Refresh
                         </button>
                     </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="table w-full">
-                            <thead>
-                                <tr class="bg-base-200/50">
-                                    <th
-                                        class="rounded-none font-bold uppercase tracking-wider text-[10px] opacity-60 px-6">
-                                        Provider</th>
-                                    <th class="font-bold uppercase tracking-wider text-[10px] opacity-60 px-6 w-1/3">
-                                        Access
-                                        Token</th>
-                                    <th class="font-bold uppercase tracking-wider text-[10px] opacity-60 px-6 w-1/3">
-                                        Refresh
-                                        Token</th>
-                                    <th
-                                        class="font-bold uppercase tracking-wider text-[10px] opacity-60 px-6 whitespace-nowrap">
-                                        Last Updated</th>
-                                    <th
-                                        class="rounded-none text-right font-bold uppercase tracking-wider text-[10px] opacity-60 px-1 w-px">
-                                        Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="providerTableBody">
-                                <tr>
-                                    <td colspan="4" class="text-center py-20">
-                                        <div class="flex flex-col items-center gap-3 opacity-30">
-                                            <i class="ph ph-lock-key text-6xl"></i>
-                                            <p class="font-medium">Enter Master API Key to access registry</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div id="providerRegistry" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Empty State -->
+                        <div class="col-span-full text-center py-20 opacity-30">
+                            <div class="flex flex-col items-center gap-3">
+                                <i class="ph ph-lock-key text-6xl"></i>
+                                <p class="font-medium">Enter Master API Key to access registry</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -235,6 +227,7 @@
         const apiKeyInput = document.getElementById('apiKey');
         const configForm = document.getElementById('configForm');
         const redirectUriInput = document.getElementById('redirectUri');
+        const providerRegistry = document.getElementById('providerRegistry');
 
         function setDefaultRedirectUri() {
             if (redirectUriInput) {
@@ -252,7 +245,6 @@
 
         setDefaultRedirectUri();
 
-        const providerTableBody = document.getElementById('providerTableBody');
         let providerData = {};
         let tokenStatus = {};
 
@@ -272,17 +264,24 @@
 
         async function fetchProviders() {
             const apiKey = apiKeyInput.value.trim();
-            if (!apiKey) return;
+            if (!apiKey) {
+                providerRegistry.innerHTML = `
+                    <div class="col-span-full text-center py-20 opacity-30">
+                        <div class="flex flex-col items-center gap-3">
+                            <i class="ph-bold ph-lock-key text-6xl"></i>
+                            <p class="font-medium">Enter Master API Key to access registry</p>
+                        </div>
+                    </div>`;
+                return;
+            }
 
             try {
-                // Fetch Configs
                 const configRes = await fetch('/api/config', {
                     headers: { 'Authorization': `Bearer ${apiKey}` }
                 });
                 if (!configRes.ok) throw new Error('Unauthorized or missing API Key');
                 providerData = await configRes.json();
 
-                // Fetch Token Status
                 const statusRes = await fetch('/api/status', {
                     headers: { 'Authorization': `Bearer ${apiKey}` }
                 });
@@ -290,10 +289,11 @@
                     tokenStatus = await statusRes.json();
                 }
 
-                renderTable();
+                renderRegistry();
+                localStorage.setItem('auth_server_api_key', apiKey);
             } catch (error) {
                 console.error('Error:', error);
-                providerTableBody.innerHTML = `<tr><td colspan="4" class="text-center text-error py-12 font-medium">${error.message}</td></tr>`;
+                providerRegistry.innerHTML = `<div class="col-span-full text-center text-error py-12 font-medium">${error.message}</div>`;
             }
         }
 
@@ -309,64 +309,76 @@
             return date.toLocaleDateString();
         }
 
-        function renderTable() {
-            providerTableBody.innerHTML = '';
+        function renderRegistry() {
+            providerRegistry.innerHTML = '';
             const entries = Object.entries(providerData);
 
             if (entries.length === 0) {
-                providerTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-16 opacity-50 font-medium italic">No providers configured yet.</td></tr>';
+                providerRegistry.innerHTML = '<div class="col-span-full text-center py-16 opacity-50 font-medium italic">No providers configured yet.</div>';
                 return;
             }
 
             for (const [name, config] of entries) {
                 const status = tokenStatus[name] || { accessToken: null, refreshToken: null, lastUpdated: null };
-                const row = document.createElement('tr');
-                row.className = "hover:bg-base-200/30 transition-colors group";
+                const card = document.createElement('div');
+                card.className = "card bg-base-200/50 border border-base-300 shadow-sm hover:shadow-md transition-all group";
 
-                row.innerHTML = `
-                    <td class="px-6 py-4">
-                        <div class="flex flex-col">
-                            <span class="font-bold text-base-content/90">${name}</span>
-                            <span class="text-[10px] opacity-40 font-mono truncate max-w-[120px]" title="${config.clientId}">${config.clientId}</span>
+                card.innerHTML = `
+                    <div class="card-body p-5">
+                        <div class="flex flex-col mb-4">
+                            <span class="text-lg font-black tracking-tight text-base-content/90 uppercase">${name}</span>
+                            <span class="text-[10px] opacity-40 font-mono truncate" title="${config.clientId}">${config.clientId}</span>
                         </div>
-                    </td>
-                    <td class="px-6 py-4">${renderTokenCell(name, 'access', status.accessToken)}</td>
-                    <td class="px-6 py-4">${renderTokenCell(name, 'refresh', status.refreshToken)}</td>
-                    <td class="px-6 py-4">
-                        <span class="text-xs font-medium opacity-60">${formatTimeAgo(status.lastUpdated)}</span>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                            <a href="/auth/${name}/login" target="_blank" class="btn btn-xs btn-primary shadow-sm" title="Authenticate">
-                                <i class="ph ph-link"></i> Connect
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[10px] uppercase font-bold opacity-30 block mb-1">Access Token</label>
+                                ${renderTokenField(name, 'access', status.accessToken)}
+                            </div>
+                            <div>
+                                <label class="text-[10px] uppercase font-bold opacity-30 block mb-1">Refresh Token</label>
+                                ${renderTokenField(name, 'refresh', status.refreshToken)}
+                            </div>
+                        </div>
+
+                        <div class="divider my-3 opacity-10"></div>
+
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-[10px] font-bold opacity-30 uppercase">Last Updated</span>
+                            <span class="text-xs font-medium opacity-60">${formatTimeAgo(status.lastUpdated)}</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="/auth/${name}/login" target="_blank" class="btn btn-primary btn-sm flex-1 shadow-sm">
+                                <i class="ph-bold ph-link"></i> Connect
                             </a>
-                            <button type="button" onclick="window.editProvider('${name}')" class="btn btn-xs btn-outline" title="Edit Config">
-                                <i class="ph ph-pencil-simple"></i> Edit
+                            <button type="button" onclick="window.editProvider('${name}')" class="btn btn-outline btn-sm flex-1">
+                                <i class="ph-bold ph-pencil-simple"></i> Edit
                             </button>
                         </div>
-                    </td>
+                    </div>
                 `;
-                providerTableBody.appendChild(row);
+                providerRegistry.appendChild(card);
             }
         }
 
-        function renderTokenCell(provider, type, value) {
+        function renderTokenField(provider, type, value) {
             if (!value) {
-                return `<span class="badge badge-sm badge-ghost opacity-40 italic">Not Authed</span>`;
+                return `<div class="h-8 flex items-center px-3 bg-base-300/30 rounded text-[10px] italic opacity-40">Not Authenticated</div>`;
             }
             const id = `token-${provider}-${type}`;
             return `
-                <div class="flex items-center gap-2">
-                    <div class="relative flex items-center">
-                        <input type="password" id="${id}" value="${value}" readonly
-                            class="input input-xs bg-base-200/50 border-none font-mono text-[10px] w-24 pr-8 focus:outline-none" />
-                        <button onclick="window.toggleToken('${id}')" class="absolute right-1 text-base-content/40 hover:text-primary transition-colors">
-                            <i class="ph ph-eye-slash text-xs" id="eye-${id}"></i>
+                <div class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3 group/token transition-all focus-within:border-primary/50">
+                    <input type="password" id="${id}" value="${value}" readonly
+                        class="bg-transparent border-none outline-none shadow-none focus:ring-0 font-mono text-[10px] flex-1 min-w-0" />
+                    <div class="flex gap-1">
+                        <button onclick="window.toggleToken('${id}')" class="btn btn-ghost btn-xs btn-square">
+                            <i class="ph-duotone ph-eye text-base opacity-50" id="eye-${id}"></i>
+                        </button>
+                        <button onclick="window.copyToken('${value}')" class="btn btn-ghost btn-xs btn-square">
+                            <i class="ph-duotone ph-copy-simple text-base opacity-50"></i>
                         </button>
                     </div>
-                    <button onclick="window.copyToken('${value}')" class="btn btn-square btn-ghost btn-xs text-base-content/40 hover:text-primary transition-colors">
-                        <i class="ph ph-copy-simple"></i>
-                    </button>
                 </div>
             `;
         }
@@ -376,10 +388,10 @@
             const eye = document.getElementById(`eye-${id}`);
             if (input.type === 'password') {
                 input.type = 'text';
-                eye.className = 'ph ph-eye text-xs';
+                eye.className = 'ph-duotone ph-eye-slash text-base opacity-70';
             } else {
                 input.type = 'password';
-                eye.className = 'ph ph-eye-slash text-xs';
+                eye.className = 'ph-duotone ph-eye text-base opacity-50';
             }
         };
 
@@ -447,16 +459,18 @@
             }
         });
 
+        // Initialize from localStorage
         const savedApiKey = localStorage.getItem('auth_server_api_key');
         if (savedApiKey) {
             apiKeyInput.value = savedApiKey;
             fetchProviders();
         }
 
-        apiKeyInput.addEventListener('input', () => {
-            localStorage.setItem('auth_server_api_key', apiKeyInput.value);
-            clearTimeout(window.fetchTimeout);
-            window.fetchTimeout = setTimeout(fetchProviders, 500);
+        // Add Enter key listener for API Key input
+        apiKeyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                fetchProviders();
+            }
         });
     </script>
 </body>
