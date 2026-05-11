@@ -54,23 +54,22 @@
             </div>
         </div>
         <div class="flex-none hidden sm:flex">
-            <div
-                class="join shadow-inner bg-base-200/50 border border-base-300 rounded-xl overflow-hidden transition-all focus-within:ring-2 focus-within:ring-primary/20">
-                <div class="join-item flex items-center px-4 border-r border-base-300/50 bg-base-100">
+            <div class="join border border-base-300 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
+                <div class="join-item flex items-center px-4 bg-base-100">
                     <i class="ph-duotone ph-key text-primary text-lg animate-pulse-slow"></i>
                 </div>
                 <div class="relative flex-1">
                     <input type="password" id="apiKey" placeholder="API_KEY"
-                        class="input join-item input-sm bg-transparent border-none focus:outline-none focus:ring-0 w-48 lg:w-64 text-xs pr-10 font-mono" />
-                    <button type="button" onclick="window.toggleToken('apiKey')"
+                        class="input join-item input-sm bg-transparent border-none focus:outline-none w-48 lg:w-64 text-xs pr-10 font-mono" />
+                    <button type="button" onclick="window.toggleToken('apiKey')" 
                         class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square">
                         <i class="ph-duotone ph-eye text-base opacity-50" id="eye-apiKey"></i>
                     </button>
                 </div>
                 <button onclick="fetchProviders()" type="button"
-                    class="btn btn-primary btn-sm join-item px-6 hover:brightness-110 active:scale-95 transition-all">
+                    class="btn btn-primary btn-sm join-item px-6">
                     <i class="ph-duotone ph-lock-key-open text-lg"></i>
-                    <span class="ml-1 hidden md:inline">Enter Key</span>
+                    <span class="ml-1 hidden md:inline">Unlock</span>
                 </button>
             </div>
         </div>
