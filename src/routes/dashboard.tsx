@@ -27,6 +27,13 @@ export const Layout = (props: { title: string; children: Child }) => (
 					href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
 					rel="stylesheet"
 				/>
+				<style>
+					{`
+						.font-mono {
+							font-family: "DM Mono", monospace;
+						}
+					`}
+				</style>
 			</head>
 			<body
 				class="bg-base-200/50 min-h-screen font-['DM_Sans',sans-serif] antialiased text-base-content tracking-tight"
@@ -54,9 +61,9 @@ export const Dashboard = () => (
 				</div>
 			</div>
 			<div class="flex-none hidden sm:flex">
-				<div class="join border border-base-300 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
-					<div class="join-item flex items-center px-4 bg-base-100">
-						<i class="ph-duotone ph-key text-primary text-lg animate-pulse-slow"></i>
+				<div class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
+					<div class="join-item flex items-center px-4 bg-base-200">
+						<i class="ph-duotone ph-key text-secondary text-lg"></i>
 					</div>
 					<div class="relative flex-1" x-data="{ show: false }">
 						<input
@@ -76,7 +83,7 @@ export const Dashboard = () => (
 							<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
 						</button>
 					</div>
-					<button x-on:click="unlock()" type="button" class="btn btn-primary btn-sm join-item px-6" x-bind:disabled="loading">
+					<button x-on:click="unlock()" type="submit" class="btn btn-primary btn-sm join-item px-6" x-bind:disabled="loading">
 						<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
 						<span class="loading loading-spinner loading-xs" x-show="loading"></span>
 						<span class="ml-1 hidden md:inline" x-text="loading ? 'Unlocking...' : 'Unlock'"></span>
@@ -148,7 +155,7 @@ export const Dashboard = () => (
 								<div class="relative group">
 									<input type="url" id="redirectUri" x-bind:value="getRedirectUri()" readonly class="input input-bordered w-full pr-12 focus:outline-none cursor-default opacity-80" />
 									<button type="button" x-on:click="copyToClipboard(getRedirectUri())" class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors">
-										<i class="ph ph-copy text-xs"></i>
+										<i class="ph-duotone ph-copy text-lg"></i>
 									</button>
 								</div>
 								<div class="label py-0.5">
@@ -181,12 +188,12 @@ export const Dashboard = () => (
 							</div>
 							<button type="button" x-on:click="fetchProviders()" class="btn btn-sm btn-base" x-bind:disabled="!isUnlocked || loading">
 								<i x-bind:class="loading ? 'ph ph-arrows-clockwise animate-spin mr-1' : 'ph ph-arrows-clockwise mr-1'"></i>
-								Refresh
+								Refresh List
 							</button>
 						</div>
 
 						<div class="relative min-h-[400px]">
-							<div x-show="loading && providers.length > 0" class="absolute inset-0 bg-base-100/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
+							<div x-show="loading && providers.length > 0" class="absolute inset-0 bg-base-100/50 backdrop-blur-md z-10 flex items-center justify-center">
 								<span class="loading loading-spinner loading-lg text-primary"></span>
 							</div>
 
@@ -263,8 +270,8 @@ export const Dashboard = () => (
 													</button>
 												</div>
 												<button type="button" x-on:click="forceRefresh(provider.name)" class="btn btn-base w-full" x-bind:disabled="loading">
-													<i class="ph-duotone ph-arrows-clockwise text-base mr-1"></i>
-													<span class="text-[10px] uppercase font-bold tracking-wider">Manual Refresh</span>
+													<i class="ph-bold ph-arrows-clockwise text-base mr-1"></i>
+													<span class="text-xs uppercase font-bold tracking-widest">Refresh Tokens</span>
 												</button>
 											</div>
 										</div>
@@ -277,7 +284,7 @@ export const Dashboard = () => (
 			</div>
 		</div>
 
-		<div class="toast toast-end z-[100]" x-show="notification.show">
+		<div class="toast toast-center toast-top z-100" x-show="notification.show">
 			<div class="alert shadow-lg border border-base-300" x-bind:class="notification.type === 'error' ? 'alert-error' : 'alert-success'">
 				<span x-text="notification.message"></span>
 			</div>
