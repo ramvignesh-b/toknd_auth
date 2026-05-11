@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auth Server Dashboard</title>
+    <title>toknd — Auth Broker Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
@@ -27,10 +27,10 @@
             <div class="flex items-center gap-2">
                 <div
                     class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-bold text-lg">
-                    <i class="ph ph-shield-check"></i>
+                    <i class="ph-duotone ph-fingerprint"></i>
                 </div>
-                <a class="text-xl font-bold tracking-tight">Auth Server <span
-                        class="text-xs font-normal opacity-50 ml-1">v1.0</span></a>
+                <a class="text-xl font-bold tracking-tight">toknd <span
+                        class="text-xs font-normal opacity-50 ml-1">auth broker</span></a>
             </div>
         </div>
         <div class="flex-none hidden sm:flex">
@@ -268,8 +268,8 @@
                 providerRegistry.innerHTML = `
                     <div class="col-span-full text-center py-20 opacity-30">
                         <div class="flex flex-col items-center gap-3">
-                            <i class="ph-bold ph-lock-key text-6xl"></i>
-                            <p class="font-medium">Enter Master API Key to access registry</p>
+                            <i class="ph-duotone ph-fingerprint text-6xl"></i>
+                            <p class="font-medium italic">Unlock toknd to access the broker registry</p>
                         </div>
                     </div>`;
                 return;

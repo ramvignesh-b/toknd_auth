@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication Successful</title>
+    <title>toknd — Authentication Successful</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
@@ -12,15 +12,17 @@
 </head>
 
 <body class="bg-base-200/50 min-h-screen flex items-center justify-center p-4 antialiased">
-    <div class="card bg-base-100 shadow-2xl max-w-md w-full border border-base-300 transform transition-all duration-500 scale-100">
+    <div
+        class="card bg-base-100 shadow-2xl max-w-md w-full border border-base-300 transform transition-all duration-500 scale-100">
         <div class="card-body items-center text-center p-8 md:p-12">
-            <div class="w-20 h-20 bg-success/10 text-success rounded-2xl flex items-center justify-center mb-6 shadow-inner animate-bounce-short">
+            <div
+                class="w-20 h-20 bg-success/10 text-success rounded-2xl flex items-center justify-center mb-6 shadow-inner animate-pulse">
                 <i class="ph ph-check-circle text-5xl"></i>
             </div>
-            
+
             <h2 class="card-title text-3xl font-black tracking-tight mb-2">Authenticated!</h2>
             <p class="text-base-content/60 leading-relaxed">
-                Successfully connected to <span class="font-bold text-base-content">__PROVIDER_NAME__</span>. 
+                Successfully connected to <span class="font-bold text-base-content">__PROVIDER_NAME__</span>.
                 You can now close this window or return to the dashboard.
             </p>
 
@@ -34,16 +36,6 @@
             </div>
         </div>
     </div>
-
-    <style>
-        @keyframes bounce-short {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .animate-bounce-short {
-            animation: bounce-short 2s ease-in-out infinite;
-        }
-    </style>
 </body>
 
 </html>
