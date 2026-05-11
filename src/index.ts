@@ -4,6 +4,7 @@ import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "./config";
+import { API_PREFIX, API_VERSION, APP_VERSION, AUTH_PREFIX, DOCS_PREFIX } from "./constants";
 import { redis } from "./core/RedisClient";
 import { apiRoutes } from "./routes/api";
 import { authRoutes } from "./routes/auth";
@@ -13,12 +14,12 @@ import { dashboardRoutes } from "./routes/dashboard";
 const app = new OpenAPIHono({ strict: false });
 
 // OpenAPI specs
-app.doc("/docs/v1/openapi.json", {
+app.doc(`${DOCS_PREFIX}/openapi.json`, {
 	openapi: "3.0.0",
 	info: {
-		version: "1.0.0",
-		title: "toknd — Auth Broker API v1",
-		description: "Centralized token management and OAuth2 broker service (v1).",
+		version: APP_VERSION,
+		title: `toknd — Auth Broker API ${API_VERSION}`,
+		description: `Centralized token management and OAuth2 broker service (${API_VERSION}).`,
 	},
 	tags: [
 		{ name: "Tokens", description: "Standard API for retrieving and refreshing provider tokens." },
@@ -38,14 +39,14 @@ app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", {
 
 // Scalar API Reference
 app.get(
-	"/docs/v1",
+	DOCS_PREFIX,
 	Scalar({
 		theme: "solarized",
-		url: "/docs/v1/openapi.json",
+		url: `${DOCS_PREFIX}/openapi.json`,
 	}),
 );
-app.get("/docs", (c) => c.redirect("/docs/v1"));
-app.get("/api", (c) => c.redirect("/docs/v1"));
+app.get("/docs", (c) => c.redirect(DOCS_PREFIX));
+app.get("/api", (c) => c.redirect(DOCS_PREFIX));
 
 app.use("*", logger());
 app.use("*", prettyJSON());
@@ -53,9 +54,9 @@ app.use("*", prettyJSON());
 app.get("/", (c) => c.redirect("/app"));
 
 app.get("/app/dashboard.js", serveStatic({ path: "./src/views/dashboard.js" }));
-app.route("/v1/auth", authRoutes);
-app.route("/api/v1/config", configRoutes);
-app.route("/api/v1", apiRoutes);
+app.route(AUTH_PREFIX, authRoutes);
+app.route(`${API_PREFIX}/config`, configRoutes);
+app.route(API_PREFIX, apiRoutes);
 app.route("/app", dashboardRoutes);
 
 app.notFound((c) => {

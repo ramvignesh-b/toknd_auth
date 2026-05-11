@@ -4,6 +4,7 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { html } from "hono/html";
 import type { Child } from "hono/jsx";
 import { config } from "../config";
+import { API_PREFIX, API_VERSION, APP_VERSION, AUTH_PREFIX, DOCS_PREFIX } from "../constants";
 
 const dashboardRoutes = new Hono({ strict: false });
 
@@ -39,7 +40,14 @@ export const Layout = (props: { title: string; children: Child; isUnlocked?: boo
 			</head>
 			<body
 				class="bg-base-200/50 min-h-screen font-['DM_Sans',sans-serif] antialiased text-base-content tracking-tight"
-				x-data={`dashboard({ initialIsUnlocked: ${props.isUnlocked || false} })`}
+				x-data={`dashboard({ 
+					initialIsUnlocked: ${props.isUnlocked || false},
+					apiVersion: '${API_VERSION}',
+					appVersion: '${APP_VERSION}',
+					apiPrefix: '${API_PREFIX}',
+					authPrefix: '${AUTH_PREFIX}',
+					docsPrefix: '${DOCS_PREFIX}'
+				})`}
 			>
 				{props.children}
 				<script src="/app/dashboard.js"></script>
@@ -64,14 +72,17 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 
 				<nav class="hidden md:flex items-center gap-1">
 					<a
-						href="/docs/v1"
+						href={DOCS_PREFIX}
 						target="_blank"
 						class="btn btn-ghost btn-sm text-base-content/60 hover:text-primary gap-2 px-3"
 						rel="noopener"
 					>
 						<i class="ph-duotone ph-book-open text-lg"></i>
 						<span class="font-bold uppercase tracking-widest text-xs">
-							API Reference <sup class="text-[8px] opacity-50 ml-0.5">v1.0.0</sup>
+							API Reference{" "}
+							<sup class="text-[8px] opacity-50 ml-0.5">
+								{API_VERSION}.{APP_VERSION}
+							</sup>
 						</span>
 					</a>
 				</nav>
@@ -108,7 +119,10 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 						>
 							<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
 							<span class="loading loading-spinner loading-xs" x-show="loading"></span>
-							<span class="ml-1 hidden md:inline" x-text="loading ? 'Unlocking...' : 'Unlock'"></span>
+							<span
+								class="ml-1 hidden md:inline"
+								x-text="loading ? 'Unlocking...' : 'Unlock'"
+							></span>
 						</button>
 					</div>
 				</template>
@@ -442,7 +456,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 												<div class="grid grid-cols-2 gap-2">
 													<button
 														type="button"
-														x-on:click="window.open('/v1/auth/' + provider.name + '/login', '_blank')"
+														x-on:click={`window.open('${AUTH_PREFIX}/' + provider.name + '/login', '_blank')`}
 														class="btn btn-primary btn-sm"
 													>
 														<i class="ph-bold ph-link"></i> Connect

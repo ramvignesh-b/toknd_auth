@@ -26,7 +26,7 @@ describe("Dashboard & Common Integration", () => {
 			throw new Error("Redis Crash");
 		});
 
-		const res = await app.request("/api/status", {
+		const res = await app.request(`${API_PREFIX}/status`, {
 			headers: { Authorization: "Bearer test-api-key" },
 		});
 

@@ -1,16 +1,9 @@
 // @ts-nocheck
-import { afterEach, describe, expect, it, mock } from "bun:test";
+import { describe, expect, it } from "bun:test";
 import { redis } from "../../src/core/RedisClient";
 import { app } from "../../src/index";
 
 describe("Config Integration", () => {
-	afterEach(() => {
-		mock.restore();
-		redis.get.mockImplementation(() => Promise.resolve(null));
-		redis.set.mockImplementation(() => Promise.resolve());
-		redis.keys.mockImplementation(() => Promise.resolve([]));
-	});
-
 	it("should list all configured providers", async () => {
 		redis.keys.mockReturnValue(Promise.resolve(["config:trakt"]));
 		redis.get.mockImplementation(() =>
@@ -25,7 +18,7 @@ describe("Config Integration", () => {
 			),
 		);
 
-		const res = await app.request("/api/config", {
+		const res = await app.request(`${API_PREFIX}/config`, {
 			headers: {
 				Authorization: "Bearer test-api-key",
 			},
@@ -46,7 +39,7 @@ describe("Config Integration", () => {
 			scope: "user:email",
 		};
 
-		const res = await app.request("/api/config/github", {
+		const res = await app.request(`${API_PREFIX}/config/github`, {
 			method: "POST",
 			headers: {
 				Authorization: "Bearer test-api-key",
@@ -67,7 +60,7 @@ describe("Config Integration", () => {
 			clientId: "missing-other-required-fields",
 		};
 
-		const res = await app.request("/api/config/invalid", {
+		const res = await app.request(`${API_PREFIX}/config/invalid`, {
 			method: "POST",
 			headers: {
 				Authorization: "Bearer test-api-key",
@@ -80,9 +73,7 @@ describe("Config Integration", () => {
 	});
 
 	it("should delete a provider configuration", async () => {
-		redis.del.mockImplementation(() => Promise.resolve(1));
-
-		const res = await app.request("/api/config/trakt", {
+		const res = await app.request(`${API_PREFIX}/config/trakt`, {
 			method: "DELETE",
 			headers: {
 				Authorization: "Bearer test-api-key",
