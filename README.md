@@ -20,47 +20,63 @@
 - **Styling**: Tailwind CSS & DaisyUI
 - **Schema & Validation**: Zod
 
-## Quick Start
+## Getting Started
+
+toknd can be deployed either as a containerized service or self-hosted directly on your hardware.
 
 ### 1. Environment Setup
 Clone the repository and create your environment file:
 ```bash
 cp .env.example .env
 ```
-Ensure you define a strong `API_KEY` in your `.env`.
+Define a strong `API_KEY` and ensure `REDIS_URL` points to a valid Redis instance.
 
-### 2. Local Development (with Auto-Watch)
-We use a Docker Compose override system to enable hot-reloading locally:
-```bash
-podman compose up --build
-```
-*Note: This mounts your ./src directory into the container and uses bun --hot to restart on any code changes.*
+### 2. Choose Deployment Method
 
-### 3. Production Deployment
-For production, only the core docker-compose.yml is used:
-```bash
-docker compose up -d --build
-```
+#### Option A: Containerized (Recommended)
+This is the easiest way to get up and running, as it bundles the application and a Redis instance together.
+
+- **Development (with Hot-Reload)**:
+  ```bash
+  podman compose up --build
+  ```
+- **Production**:
+  ```bash
+  docker compose up -d --build
+  ```
+
+#### Option B: Self-Hosting (Bare Metal)
+Ideal for lightweight deployments or custom environments where you already have Bun and Redis.
+
+1. **Install Dependencies**:
+   ```bash
+   bun install
+   ```
+2. **Start the Server**:
+   - **Development**: `bun run dev` (with hot-reload)
+   - **Production**: `bun run start`
+   *Note: Ensure your Redis server is running and accessible via the `REDIS_URL` in your `.env`.*
+
+---
 
 ## API Reference
 
-All protected endpoints require an Authorization header:
+toknd provides a built-in **Scalar API Reference** that allows you to explore and test all endpoints directly from your browser.
+
+- **Interactive UI**: [http://localhost:3000/api](http://localhost:3000/api) (or `/docs`)
+- **OpenAPI Spec (JSON)**: [http://localhost:3000/doc](http://localhost:3000/doc)
+
+All protected endpoints require a Bearer token in the `Authorization` header:
 `Authorization: Bearer <your_master_api_key>`
 
-### Token Brokerage
-- **Get Valid Token**: `GET /api/token/:provider`
-  - Returns a valid access token. Automatically triggers a refresh if the current one is expired.
-- **Registry Status**: `GET /api/status`
-  - Returns the connectivity and refresh status of all configured providers.
-
-### Authentication Flow
-1. **Initiate**: `GET /auth/:provider/login`
-2. **Callback**: `GET /auth/callback` (Handled internally by toknd)
+### Core Concepts
+- **Token Brokerage**: Automated access token retrieval and background refreshes for all configured providers.
+- **Provider Management**: Register and manage OAuth2 providers via the Dashboard or the configuration API.
 
 ## Dashboard
-Access the toknd dashboard at:
+Access the **toknd** dashboard at:
 `http://localhost:3000/app`
 
-Authenticate the registry using your Master API Key to manage your providers and view live token status.
+The dashboard allows you to manage provider configurations, view live token statuses, and manually trigger refreshes. Authenticate using your **Master API Key**.
 
 ---
