@@ -4,8 +4,9 @@ import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "./config";
-import { API_PREFIX, APP_VERSION, AUTH_PREFIX, DOCS_PREFIX } from "./constants";
+import { API_PREFIX, AUTH_PREFIX, DOCS_PREFIX } from "./constants";
 import { redis } from "./core/RedisClient";
+import { openApiSpec, securityScheme } from "./openapi";
 import { apiRoutes } from "./routes/api";
 import { authRoutes } from "./routes/auth";
 import { configRoutes } from "./routes/config";
@@ -14,35 +15,8 @@ import { dashboardRoutes } from "./routes/dashboard";
 const app = new OpenAPIHono({ strict: false });
 
 // OpenAPI specs
-app.doc(`${DOCS_PREFIX}/openapi.json`, {
-	openapi: "3.0.0",
-	info: {
-		version: APP_VERSION,
-		title: "toknd Auth Broker API",
-		description:
-			"A high-performance OAuth2 broker and token management service. Designed to centralize provider configurations and automate token lifecycle management across distributed systems.",
-	},
-	tags: [
-		{
-			name: "Tokens",
-			description: "Endpoint operations for accessing and force-refreshing active provider tokens.",
-		},
-		{
-			name: "Management",
-			description: "Administrative operations for provider lifecycle and configuration.",
-		},
-		{
-			name: "Auth (Internal)",
-			description: "System-level OAuth2 handshake and callback processing.",
-		},
-	],
-	security: [{ API_KEY: [] }],
-});
-
-app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", {
-	type: "http",
-	scheme: "bearer",
-});
+app.doc(`${DOCS_PREFIX}/openapi.json`, openApiSpec);
+app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", securityScheme);
 
 // Scalar API Reference
 app.get(
