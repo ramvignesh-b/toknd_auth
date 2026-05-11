@@ -42,7 +42,7 @@ app.use("*", prettyJSON());
 
 app.get("/", (c) => c.redirect("/app"));
 
-app.use("/app/*", serveStatic({ root: "./src/views" }));
+app.get("/app/dashboard.js", serveStatic({ path: "./src/views/dashboard.js" }));
 app.route("/auth", authRoutes);
 app.route("/api/config", configRoutes);
 app.route("/api", apiRoutes);
