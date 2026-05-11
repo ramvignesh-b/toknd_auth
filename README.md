@@ -1,4 +1,5 @@
 # toknd — Auth Broker
+![Dashboard Screenshot](.docs/screenshot.png)
 
 **toknd** is a minimal, centralized authentication and token broker. Built with **Bun**, **Hono**, and **Redis**, it serves as a middleware layer that manages OAuth2 providers, token persistence, and automatic refreshes, allowing your applications to focus on their core logic.
 
@@ -63,4 +64,3 @@ Access the toknd dashboard at:
 Authenticate the registry using your Master API Key to manage your providers and view live token status.
 
 ---
-
