@@ -18,16 +18,18 @@ The Auth Server is a centralized authentication and token management service bui
 
 ### Docker Deployment (Recommended)
 
-To deploy the Auth Server using Docker, follow these steps:
+To deploy the Auth Server using Docker in production:
 
 1. Ensure you have Docker and Docker Compose installed on your system.
 2. Clone the repository and navigate to the project directory.
 3. Create a `.env` file based on `.env.example` and provide your `API_KEY`.
 4. Run the following command to start the services:
    ```bash
-   docker-compose up -d
+   docker-compose up -d --build
    ```
-5. The application will be available at `http://localhost:3000`.
+5. The application will be available at `http://localhost:3000` (or the port specified in your `.env`).
+
+The Docker setup uses a multi-stage build for a slim production image and persistent Redis storage.
 
 ### Local Development Setup
 

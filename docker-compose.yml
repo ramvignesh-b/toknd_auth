@@ -1,16 +1,32 @@
 services:
   app:
-    build: .
+    build: 
+      context: .
+      target: release
+    restart: always
     ports:
-      - "3000:3000"
-    volumes:
-      - .:/app:z
-      - /app/node_modules
-    command: bun run dev
+      - "${PORT:-3000}:3000"
     environment:
       - REDIS_URL=redis://redis:6379
       - API_KEY=${API_KEY}
+      - PORT=3000
     depends_on:
       - redis
+    networks:
+      - auth-network
+
   redis:
     image: redis:alpine
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - auth-network
+
+networks:
+  auth-network:
+    driver: bridge
+
+volumes:
+  redis-data:
