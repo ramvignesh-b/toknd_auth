@@ -34,4 +34,25 @@ describe("Dashboard & Common Integration", () => {
 		const body = await res.json();
 		expect(body.error).toBe("Internal Server Error");
 	});
+
+	it("should set a cookie on successful unlock", async () => {
+		const res = await app.request("/app/unlock", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ apiKey: "test-api-key" }),
+		});
+
+		expect(res.status).toBe(200);
+		expect(res.headers.get("Set-Cookie")).toContain("toknd_api_key=test-api-key");
+		expect(res.headers.get("Set-Cookie")).toContain("HttpOnly");
+	});
+
+	it("should clear the cookie on logout", async () => {
+		const res = await app.request("/app/logout", {
+			method: "POST",
+		});
+
+		expect(res.status).toBe(200);
+		expect(res.headers.get("Set-Cookie")).toContain("toknd_api_key=;");
+	});
 });

@@ -10,9 +10,9 @@ document.addEventListener("alpine:init", () => {
 		return date.toLocaleDateString();
 	};
 
-	window.Alpine.data("dashboard", () => ({
-		apiKey: localStorage.getItem("toknd_api_key") || "",
-		isUnlocked: false,
+	window.Alpine.data("dashboard", ({ initialIsUnlocked }) => ({
+		apiKey: "",
+		isUnlocked: initialIsUnlocked,
 		loading: false,
 		providers: [],
 		form: {
@@ -30,8 +30,8 @@ document.addEventListener("alpine:init", () => {
 		},
 
 		init() {
-			if (this.apiKey) {
-				this.unlock();
+			if (this.isUnlocked) {
+				this.fetchProviders();
 			}
 		},
 
@@ -39,14 +39,34 @@ document.addEventListener("alpine:init", () => {
 			if (!this.apiKey) return;
 			this.loading = true;
 			try {
-				localStorage.setItem("toknd_api_key", this.apiKey);
-				await this.fetchProviders();
+				const res = await fetch("/app/unlock", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ apiKey: this.apiKey }),
+				});
+
+				if (!res.ok) throw new Error("Invalid API Key");
+
 				this.isUnlocked = true;
+				await this.fetchProviders();
+				this.apiKey = ""; // Clear after success
 			} catch (err) {
-				this.showNotification(`Failed to unlock: ${err.message}. Check your API Key`, "error");
-				localStorage.removeItem("toknd_api_key");
+				this.showNotification(err.message, "error");
 				this.isUnlocked = false;
-				this.apiKey = "";
+			} finally {
+				this.loading = false;
+			}
+		},
+
+		async logout() {
+			this.loading = true;
+			try {
+				await fetch("/app/logout", { method: "POST" });
+				this.isUnlocked = false;
+				this.providers = [];
+				this.showNotification("Logged out successfully");
+			} catch (err) {
+				this.showNotification(`Logout failed: ${err.message}`, "error");
 			} finally {
 				this.loading = false;
 			}
@@ -56,40 +76,52 @@ document.addEventListener("alpine:init", () => {
 			this.loading = true;
 			try {
 				const [configRes, statusRes] = await Promise.all([
-					fetch("/api/config", { headers: { Authorization: `Bearer ${this.apiKey}` } }),
-					fetch("/api/status", { headers: { Authorization: `Bearer ${this.apiKey}` } }),
+					fetch("/api/config"),
+					fetch("/api/status"),
 				]);
 
-				if (!configRes.ok || !statusRes.ok) throw new Error("Unauthorized");
+				if (configRes.status === 401 || statusRes.status === 401) {
+					return this.handleSessionExpired();
+				}
 
-				const config = await configRes.json();
-				const status = await statusRes.json();
+				if (!configRes.ok || !statusRes.ok) throw new Error("Failed to fetch data");
 
-				this.providers = Object.entries(config).map(([name, cfg]) => ({
-					name,
-					config: cfg,
-					status: status[name] || { accessToken: null, refreshToken: null, lastUpdated: null },
-				}));
+				const [config, status] = await Promise.all([configRes.json(), statusRes.json()]);
+				this.providers = this.mapProviders(config, status);
 			} catch (err) {
 				this.showNotification(err.message, "error");
-				throw err;
 			} finally {
 				this.loading = false;
 			}
 		},
 
-		async saveConfig(event) {
-			if (event) event.preventDefault();
+		mapProviders(config, status) {
+			return Object.entries(config).map(([name, cfg]) => ({
+				name,
+				config: cfg,
+				status: status[name] || { accessToken: null, refreshToken: null, lastUpdated: null },
+			}));
+		},
+
+		handleSessionExpired() {
+			this.isUnlocked = false;
+			this.providers = [];
+			this.showNotification("Session expired", "error");
+		},
+
+		async saveConfig() {
 			this.loading = true;
 			try {
 				const res = await fetch(`/api/config/${this.form.providerName}`, {
 					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${this.apiKey}`,
-					},
+					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(this.form),
 				});
+
+				if (res.status === 401) {
+					this.isUnlocked = false;
+					throw new Error("Session expired");
+				}
 
 				if (!res.ok) throw new Error("Failed to save");
 
@@ -116,8 +148,12 @@ document.addEventListener("alpine:init", () => {
 			try {
 				const res = await fetch(`/api/refresh/${name}`, {
 					method: "POST",
-					headers: { Authorization: `Bearer ${this.apiKey}` },
 				});
+
+				if (res.status === 401) {
+					this.isUnlocked = false;
+					throw new Error("Session expired");
+				}
 
 				if (!res.ok) throw new Error("Refresh failed");
 
