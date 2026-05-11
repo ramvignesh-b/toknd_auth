@@ -3,6 +3,7 @@ import { Scalar } from "@scalar/hono-api-reference";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "./config";
+import { redis } from "./core/RedisClient";
 import { apiRoutes } from "./routes/api";
 import { authRoutes } from "./routes/auth";
 import { configRoutes } from "./routes/config";
@@ -63,7 +64,12 @@ app.onError((err, c) => {
 	return c.json({ error: "Internal Server Error", message: err.message }, 500);
 });
 
-app.get("/health", (c) => c.json({ status: "ok" }));
+app.get("/health", async (c) => {
+	if (redis.status !== "ready") {
+		return c.json({ status: "error", message: "Redis down" }, 503);
+	}
+	return c.json({ status: "ok" });
+});
 
 export { app };
 
