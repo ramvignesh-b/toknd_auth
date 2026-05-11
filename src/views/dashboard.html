@@ -78,13 +78,9 @@
                         <div class="form-control">
                             <label class="label py-1">
                                 <span class="label-text font-semibold opacity-70">Redirect URI</span>
-                                <span class="label-text-alt opacity-50 italic">Optional</span>
                             </label>
-                            <input type="url" id="redirectUri" placeholder="Auto-generated if empty"
+                            <input type="url" id="redirectUri" 
                                 class="input input-bordered focus:input-primary" />
-                            <label class="label py-1">
-                                <span class="label-text-alt opacity-40 font-mono text-[10px]" id="defaultRedirectUriHint"></span>
-                            </label>
                         </div>
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-semibold opacity-70">Scope</span></label>
@@ -152,10 +148,9 @@
         const apiKeyInput = document.getElementById('apiKey');
         const configForm = document.getElementById('configForm');
         const providerTableBody = document.getElementById('providerTableBody');
-        const defaultRedirectUriHint = document.getElementById('defaultRedirectUriHint');
-
-        if (defaultRedirectUriHint) {
-            defaultRedirectUriHint.textContent = `Default: ${window.location.origin}/auth/callback`;
+        const redirectUriInput = document.getElementById('redirectUri');
+        if (redirectUriInput) {
+            redirectUriInput.value = `${window.location.origin}/auth/callback`;
         }
 
         let providerData = {};
@@ -228,7 +223,7 @@
             document.getElementById('clientSecret').value = config.clientSecret;
             document.getElementById('authUrl').value = config.authUrl;
             document.getElementById('tokenUrl').value = config.tokenUrl;
-            document.getElementById('redirectUri').value = config.redirectUri || '';
+            document.getElementById('redirectUri').value = config.redirectUri || `${window.location.origin}/auth/callback`;
             document.getElementById('scope').value = config.scope;
 
             document.getElementById('configForm').scrollIntoView({ behavior: 'smooth' });
@@ -268,6 +263,9 @@
                 showNotification('Configuration saved successfully!');
                 fetchProviders();
                 configForm.reset();
+                if (redirectUriInput) {
+                    redirectUriInput.value = `${window.location.origin}/auth/callback`;
+                }
             } catch (error) {
                 console.error('Error saving config:', error);
                 showNotification(error.message, 'error');
