@@ -1,11 +1,13 @@
 /** @jsxImportSource hono/jsx */
 import { Hono } from "hono";
+import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { html } from "hono/html";
 import type { Child } from "hono/jsx";
+import { config } from "../config";
 
 const dashboardRoutes = new Hono({ strict: false });
 
-export const Layout = (props: { title: string; children: Child }) => (
+export const Layout = (props: { title: string; children: Child; isUnlocked?: boolean }) => (
 	<>
 		{html`<!DOCTYPE html>`}
 		<html lang="en" data-theme="abyss">
@@ -37,7 +39,7 @@ export const Layout = (props: { title: string; children: Child }) => (
 			</head>
 			<body
 				class="bg-base-200/50 min-h-screen font-['DM_Sans',sans-serif] antialiased text-base-content tracking-tight"
-				x-data="dashboard"
+				x-data={`dashboard({ initialIsUnlocked: ${props.isUnlocked || false} })`}
 			>
 				{props.children}
 				<script src="/app/dashboard.js"></script>
@@ -47,8 +49,8 @@ export const Layout = (props: { title: string; children: Child }) => (
 	</>
 );
 
-export const Dashboard = () => (
-	<Layout title="toknd — Auth Broker Dashboard">
+export const Dashboard = (props: { isUnlocked: boolean }) => (
+	<Layout title="toknd — Auth Broker Dashboard" isUnlocked={props.isUnlocked}>
 		<div class="navbar bg-base-100 shadow-sm px-4 md:px-8 border-b border-base-300">
 			<div class="flex-1">
 				<div class="flex items-center gap-2">
@@ -92,6 +94,14 @@ export const Dashboard = () => (
 						<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
 						<span class="loading loading-spinner loading-xs" x-show="loading"></span>
 						<span class="ml-1 hidden md:inline" x-text="loading ? 'Unlocking...' : 'Unlock'"></span>
+					</button>
+					<button
+						x-show="isUnlocked"
+						x-on:click="logout()"
+						type="button"
+						class="btn btn-ghost btn-sm join-item text-error hover:bg-error/10"
+					>
+						<i class="ph-bold ph-power text-lg"></i>
 					</button>
 				</div>
 			</div>
@@ -484,7 +494,28 @@ export const Success = (props: { provider: string }) => (
 );
 
 dashboardRoutes.get("/", async (c) => {
-	return c.html(<Dashboard />);
+	const isUnlocked = getCookie(c, "toknd_api_key") === config.API_KEY;
+	return c.html(<Dashboard isUnlocked={isUnlocked} />);
+});
+
+dashboardRoutes.post("/unlock", async (c) => {
+	const { apiKey } = await c.req.json();
+	if (apiKey !== config.API_KEY) {
+		return c.json({ error: "Invalid API Key" }, 401);
+	}
+	setCookie(c, "toknd_api_key", apiKey, {
+		httpOnly: true,
+		secure: true,
+		sameSite: "Strict",
+		path: "/",
+		maxAge: 60 * 60 * 24 * 7, // 1 week
+	});
+	return c.json({ success: true });
+});
+
+dashboardRoutes.post("/logout", async (c) => {
+	deleteCookie(c, "toknd_api_key", { path: "/" });
+	return c.json({ success: true });
 });
 
 dashboardRoutes.get("/success", async (c) => {

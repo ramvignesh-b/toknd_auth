@@ -24,7 +24,7 @@ describe("API Integration", () => {
 
 		expect(res.status).toBe(401);
 		const body = await res.json();
-		expect(body).toEqual({ error: "Missing or invalid authorization header" });
+		expect(body).toEqual({ error: "Missing or invalid authorization" });
 	});
 
 	it("should return 200 for health check (no auth needed)", async () => {
@@ -65,6 +65,25 @@ describe("API Integration", () => {
 		const body = await res.json();
 		expect(body.trakt).toBeDefined();
 		expect(body.trakt.accessToken).toBe("current-access-token");
+	});
+
+	it("should return 200 for status with valid Cookie", async () => {
+		redis.keys.mockReturnValue(Promise.resolve(["config:trakt"]));
+		redis.get.mockImplementation((key) => {
+			if (key.includes("config")) return Promise.resolve(mockTraktConfig);
+			if (key.includes("access_token")) return Promise.resolve("current-access-token");
+			return Promise.resolve(null);
+		});
+
+		const res = await app.request("/api/status", {
+			headers: {
+				Cookie: "toknd_api_key=test-api-key",
+			},
+		});
+
+		expect(res.status).toBe(200);
+		const body = await res.json();
+		expect(body.trakt).toBeDefined();
 	});
 
 	it("should return 404 for unknown provider token", async () => {
