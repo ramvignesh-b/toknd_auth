@@ -285,8 +285,46 @@ export const Dashboard = () => (
 	</Layout>
 );
 
+export const Success = (props: { provider: string }) => (
+	<Layout title="Authenticated!">
+		<div class="min-h-[80vh] flex items-center justify-center p-4">
+			<div class="card bg-base-100 shadow-xl border border-base-300 max-w-md w-full">
+				<div class="card-body items-center text-center p-8 md:p-12">
+					<div class="w-20 h-20 bg-success/10 text-success rounded-2xl flex items-center justify-center mb-6 shadow-inner animate-pulse-slow">
+						<i class="ph-duotone ph-check-circle text-5xl"></i>
+					</div>
+
+					<h2 class="card-title text-3xl font-black tracking-tight mb-2 uppercase">Authenticated!</h2>
+					<p class="text-base-content/60 leading-relaxed">
+						Successfully connected to{" "}
+						<span class="font-bold text-base-content uppercase">{props.provider}</span>.
+						You can now close this window or return to the dashboard.
+					</p>
+
+					<div class="divider my-8 opacity-50"></div>
+
+					<div class="card-actions w-full">
+						<a
+							href="/app"
+							class="btn btn-primary btn-block shadow-lg hover:shadow-primary/20 transition-all"
+						>
+							<i class="ph-bold ph-house mr-2"></i>
+							Back to Dashboard
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</Layout>
+);
+
 dashboardRoutes.get("/", async (c) => {
 	return c.html(<Dashboard />);
+});
+
+dashboardRoutes.get("/success", async (c) => {
+	const provider = c.req.query("provider") || "Provider";
+	return c.html(<Success provider={provider} />);
 });
 
 export { dashboardRoutes };
