@@ -47,6 +47,7 @@ const statusRoute = createRoute({
 	method: "get",
 	path: "/status",
 	security: [{ API_KEY: [] }],
+	tags: ["Tokens"],
 	responses: {
 		200: {
 			content: { "application/json": { schema: StatusResponseSchema } },
@@ -59,6 +60,7 @@ const tokenRoute = createRoute({
 	method: "get",
 	path: "/token/{provider}",
 	security: [{ API_KEY: [] }],
+	tags: ["Tokens"],
 	request: {
 		params: z.object({
 			provider: z.string().openapi({ example: "trakt" }),
@@ -80,6 +82,7 @@ const refreshRoute = createRoute({
 	method: "post",
 	path: "/refresh/{provider}",
 	security: [{ API_KEY: [] }],
+	tags: ["Tokens"],
 	request: {
 		params: z.object({
 			provider: z.string().openapi({ example: "trakt" }),

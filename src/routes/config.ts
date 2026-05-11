@@ -38,6 +38,7 @@ const listConfigRoute = createRoute({
 	method: "get",
 	path: "/",
 	security: [{ API_KEY: [] }],
+	tags: ["Management"],
 	responses: {
 		200: {
 			content: { "application/json": { schema: AllProvidersResponse } },
@@ -50,6 +51,7 @@ const setConfigRoute = createRoute({
 	method: "post",
 	path: "/{provider}",
 	security: [{ API_KEY: [] }],
+	tags: ["Management"],
 	request: {
 		params: z.object({
 			provider: z.string().openapi({ example: "trakt" }),
@@ -74,6 +76,7 @@ const deleteConfigRoute = createRoute({
 	method: "delete",
 	path: "/{provider}",
 	security: [{ API_KEY: [] }],
+	tags: ["Management"],
 	request: {
 		params: z.object({
 			provider: z.string().openapi({ example: "trakt" }),

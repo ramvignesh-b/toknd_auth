@@ -20,6 +20,15 @@ app.doc("/doc", {
 		title: "toknd — Auth Broker API",
 		description: "Centralized token management and OAuth2 broker service.",
 	},
+	tags: [
+		{ name: "Tokens", description: "Standard API for retrieving and refreshing provider tokens." },
+		{ name: "Management", description: "Administrative API for managing provider configurations." },
+		{
+			name: "Auth (Internal)",
+			description:
+				"**NOTE: YOU MIGHT NOT HAVE TO USE THESE** These endpoints manage the OAuth2 flow and are orchestrated by the system.",
+		},
+	],
 });
 
 app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", {

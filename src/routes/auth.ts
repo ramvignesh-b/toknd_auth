@@ -17,6 +17,8 @@ const AuthErrorResponse = z
 const loginRoute = createRoute({
 	method: "get",
 	path: "/{provider}/login",
+	tags: ["Auth (Internal)"],
+	summary: "Start OAuth2 flow (Managed by System)",
 	request: {
 		params: z.object({
 			provider: z.string().openapi({ example: "trakt" }),
@@ -36,6 +38,8 @@ const loginRoute = createRoute({
 const callbackRoute = createRoute({
 	method: "get",
 	path: "/callback",
+	tags: ["Auth (Internal)"],
+	summary: "OAuth2 callback handler (Managed by System)",
 	request: {
 		query: z.object({
 			state: z
