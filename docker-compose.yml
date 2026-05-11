@@ -3,9 +3,10 @@ services:
     build: .
     restart: always
     ports:
-      - "${PORT:-3000}:3000"
+      - "${APP_PORT:-3000}:3000"
     environment:
-      - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - API_KEY=${API_KEY}
     depends_on:
       - redis
@@ -19,6 +20,8 @@ services:
   redis:
     image: redis:alpine
     restart: always
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis-data:/data
 
