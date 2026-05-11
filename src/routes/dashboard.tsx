@@ -52,7 +52,7 @@ export const Layout = (props: { title: string; children: Child; isUnlocked?: boo
 export const Dashboard = (props: { isUnlocked: boolean }) => (
 	<Layout title="toknd — Auth Broker Dashboard" isUnlocked={props.isUnlocked}>
 		<div class="navbar bg-base-100 shadow-sm px-4 md:px-8 border-b border-base-300">
-			<div class="flex-1">
+			<div class="flex-1 flex items-center gap-6">
 				<div class="flex items-center gap-2">
 					<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-semibold text-lg">
 						<i class="ph-duotone ph-fingerprint"></i>
@@ -61,6 +61,17 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 						toknd <span class="text-xs font-normal opacity-50 ml-1">auth broker</span>
 					</div>
 				</div>
+
+				<nav class="hidden md:flex items-center gap-1">
+					<a
+						href="/docs"
+						target="_blank"
+						class="btn btn-ghost btn-sm text-base-content/60 hover:text-primary gap-2 px-3" rel="noopener"
+					>
+						<i class="ph-duotone ph-book-open text-lg"></i>
+						<span class="font-bold uppercase tracking-widest text-xs">API Reference</span>
+					</a>
+				</nav>
 			</div>
 			<div class="flex-none hidden sm:flex">
 				<template x-if="!isUnlocked">
