@@ -63,47 +63,53 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 				</div>
 			</div>
 			<div class="flex-none hidden sm:flex">
-				<div class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
-					<div class="join-item flex items-center px-4 bg-base-200">
-						<i class="ph-duotone ph-key text-secondary text-lg"></i>
-					</div>
-					<div class="relative flex-1" x-data="{ show: false }">
-						<input
-							x-bind:type="show ? 'text' : 'password'"
-							id="apiKey"
-							name="apiKey"
-							x-model="apiKey"
-							aria-label="Master API Key"
-							placeholder="API_KEY"
-							class="input join-item input-sm bg-transparent border-none focus:outline-none w-48 lg:w-64 text-xs pr-10 font-mono"
-						/>
+				<template x-if="!isUnlocked">
+					<div class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
+						<div class="join-item flex items-center px-4 bg-base-200">
+							<i class="ph-duotone ph-key text-secondary text-lg"></i>
+						</div>
+						<div class="relative flex-1" x-data="{ show: false }">
+							<input
+								x-bind:type="show ? 'text' : 'password'"
+								id="apiKey"
+								name="apiKey"
+								x-model="apiKey"
+								aria-label="Master API Key"
+								placeholder="API_KEY"
+								class="input join-item input-sm bg-transparent border-none focus:outline-none w-48 lg:w-64 text-xs pr-10 font-mono"
+							/>
+							<button
+								type="button"
+								x-on:click="show = !show"
+								class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
+							>
+								<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
+							</button>
+						</div>
 						<button
-							type="button"
-							x-on:click="show = !show"
-							class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
+							x-on:click="unlock()"
+							type="submit"
+							class="btn btn-primary btn-sm join-item px-6"
+							x-bind:disabled="loading"
 						>
-							<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
+							<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
+							<span class="loading loading-spinner loading-xs" x-show="loading"></span>
+							<span class="ml-1 hidden md:inline" x-text="loading ? 'Unlocking...' : 'Unlock'"></span>
 						</button>
 					</div>
+				</template>
+
+				<template x-if="isUnlocked">
 					<button
-						x-on:click="unlock()"
-						type="submit"
-						class="btn btn-primary btn-sm join-item px-6"
-						x-bind:disabled="loading"
-					>
-						<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
-						<span class="loading loading-spinner loading-xs" x-show="loading"></span>
-						<span class="ml-1 hidden md:inline" x-text="loading ? 'Unlocking...' : 'Unlock'"></span>
-					</button>
-					<button
-						x-show="isUnlocked"
 						x-on:click="logout()"
 						type="button"
-						class="btn btn-ghost btn-sm join-item text-error hover:bg-error/10"
+						class="btn btn-ghost btn-sm text-error hover:bg-error/10 gap-2 px-4"
+						x-bind:disabled="loading"
 					>
 						<i class="ph-bold ph-power text-lg"></i>
+						<span class="font-bold uppercase tracking-wider text-xs">Logout</span>
 					</button>
-				</div>
+				</template>
 			</div>
 		</div>
 
