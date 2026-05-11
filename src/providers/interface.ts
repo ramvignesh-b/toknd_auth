@@ -6,7 +6,7 @@ export interface TokenResponse {
 
 export interface OAuthProvider {
 	name: string;
-	getAuthUrl(): string;
-	exchangeCode(code: string): Promise<TokenResponse>;
+	getAuthUrl(state: string, redirectUri: string): string;
+	exchangeCode(code: string, redirectUri: string): Promise<TokenResponse>;
 	refreshToken(refreshToken: string): Promise<TokenResponse>;
 }

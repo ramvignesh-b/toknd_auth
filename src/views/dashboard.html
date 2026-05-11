@@ -10,14 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
     <style>
-        .font-mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
-
-        .ph {
-            font-size: 1.25rem;
-            vertical-align: middle;
-        }
+        .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        .ph { font-size: 1.25rem; vertical-align: middle; }
     </style>
 </head>
 
@@ -25,12 +19,10 @@
     <div class="navbar bg-base-100 shadow-sm px-4 md:px-8 border-b border-base-300">
         <div class="flex-1">
             <div class="flex items-center gap-2">
-                <div
-                    class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-bold text-lg">
+                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-bold text-lg">
                     <i class="ph ph-shield-check"></i>
                 </div>
-                <a class="text-xl font-bold tracking-tight">Auth Server <span
-                        class="text-xs font-normal opacity-50 ml-1">v1.0</span></a>
+                <a class="text-xl font-bold tracking-tight">Auth Server <span class="text-xs font-normal opacity-50 ml-1">v1.0</span></a>
             </div>
         </div>
         <div class="flex-none">
@@ -55,8 +47,7 @@
 
                     <form id="configForm" class="space-y-4">
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Provider
-                                    ID</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Provider ID</span></label>
                             <input type="text" id="providerName" placeholder="e.g. trakt" required
                                 class="input input-bordered focus:input-primary" />
                         </div>
@@ -64,48 +55,45 @@
                         <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">Credentials</div>
 
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client
-                                    ID</span></label>
-                            <input type="text" id="clientId" placeholder="OAuth client id" required
-                                class="input input-bordered focus:input-primary" />
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client ID</span></label>
+                            <input type="text" id="clientId" placeholder="OAuth client id" required class="input input-bordered focus:input-primary" />
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client
-                                    Secret</span></label>
-                            <input type="password" id="clientSecret" placeholder="OAuth client secret" required
-                                class="input input-bordered focus:input-primary" />
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client Secret</span></label>
+                            <input type="password" id="clientSecret" placeholder="OAuth client secret" required class="input input-bordered focus:input-primary" />
                         </div>
 
                         <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">Endpoints</div>
 
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Auth
-                                    URL</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Auth URL</span></label>
                             <input type="url" id="authUrl" placeholder="https://trakt.tv/oauth/authorize" required
                                 class="input input-bordered focus:input-primary" />
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Token
-                                    URL</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Token URL</span></label>
                             <input type="url" id="tokenUrl" placeholder="https://api.trakt.tv/oauth/token" required
                                 class="input input-bordered focus:input-primary" />
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Redirect
-                                    URI</span></label>
-                            <input type="url" id="redirectUri" placeholder="http://localhost:3000/auth/trakt/callback"
-                                required class="input input-bordered focus:input-primary" />
+                            <label class="label py-1">
+                                <span class="label-text font-semibold opacity-70">Redirect URI</span>
+                                <span class="label-text-alt opacity-50 italic">Optional</span>
+                            </label>
+                            <input type="url" id="redirectUri" placeholder="Auto-generated if empty"
+                                class="input input-bordered focus:input-primary" />
+                            <label class="label py-1">
+                                <span class="label-text-alt opacity-40 font-mono text-[10px]" id="defaultRedirectUriHint"></span>
+                            </label>
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span
-                                    class="label-text font-semibold opacity-70">Scope</span>(optional)</label>
-                            <input type="text" id="scope" placeholder="public"
-                                class="input input-bordered focus:input-primary" />
+                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Scope</span></label>
+                            <input type="text" id="scope" placeholder="public" class="input input-bordered focus:input-primary" />
                         </div>
 
                         <div class="card-actions pt-4">
                             <button type="submit" class="btn btn-primary w-full shadow-md">
-                                <i class="ph ph-plus-bold"></i>
+                                <i class="ph ph-plus-bold mr-1"></i>
                                 Save Configuration
                             </button>
                         </div>
@@ -132,12 +120,9 @@
                         <table class="table w-full">
                             <thead>
                                 <tr class="bg-base-200/50">
-                                    <th class="rounded-none font-bold uppercase tracking-wider text-xs opacity-60">
-                                        Provider</th>
+                                    <th class="rounded-none font-bold uppercase tracking-wider text-xs opacity-60">Provider</th>
                                     <th class="font-bold uppercase tracking-wider text-xs opacity-60">Client ID</th>
-                                    <th
-                                        class="rounded-none text-right font-bold uppercase tracking-wider text-xs opacity-60">
-                                        Actions</th>
+                                    <th class="rounded-none text-right font-bold uppercase tracking-wider text-xs opacity-60">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="providerTableBody">
@@ -167,6 +152,11 @@
         const apiKeyInput = document.getElementById('apiKey');
         const configForm = document.getElementById('configForm');
         const providerTableBody = document.getElementById('providerTableBody');
+        const defaultRedirectUriHint = document.getElementById('defaultRedirectUriHint');
+
+        if (defaultRedirectUriHint) {
+            defaultRedirectUriHint.textContent = `Default: ${window.location.origin}/auth/callback`;
+        }
 
         let providerData = {};
 
@@ -175,7 +165,7 @@
             const alert = toast.querySelector('.alert');
             const msgSpan = document.getElementById('notificationMessage');
 
-            alert.className = `alert alert-${type}`;
+            alert.className = `alert alert-${type} shadow-lg`;
             msgSpan.textContent = message;
             toast.style.display = 'block';
 
@@ -186,46 +176,46 @@
 
         async function fetchProviders() {
             const apiKey = apiKeyInput.value.trim();
-            if (!apiKey) {
-                return;
-            }
+            if (!apiKey) return;
 
             try {
                 const response = await fetch('/api/config', {
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`
-                    }
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
                 });
                 if (!response.ok) throw new Error(await response.text());
                 const providers = await response.json();
                 providerData = providers;
 
                 providerTableBody.innerHTML = '';
-
                 const entries = Object.entries(providers);
+
                 if (entries.length === 0) {
-                    providerTableBody.innerHTML = '<tr><td colspan="3" class="text-center py-8 opacity-50">No providers configured yet.</td></tr>';
+                    providerTableBody.innerHTML = '<tr><td colspan="3" class="text-center py-12 opacity-50">No providers configured.</td></tr>';
                     return;
                 }
 
                 for (const [name, config] of entries) {
                     const row = document.createElement('tr');
-                    row.className = "hover";
+                    row.className = "hover:bg-base-200/50 transition-colors";
                     row.innerHTML = `
-                                <td class="font-bold text-base-content/80">${name}</td>
-                                <td><code class="text-xs bg-base-300 px-2 py-1 rounded-md font-mono">${config.clientId}</code></td>
-                                <td class="text-right">
-                                    <div class="flex gap-2 justify-end">
-                                        <a href="/auth/${name}/login" target="_blank" class="btn btn-xs btn-primary">Connect</a>
-                                        <button type="button" onclick="editProvider('${name}')" class="btn btn-xs btn-outline">Edit</button>
-                                    </div>
-                                </td>
-                            `;
+                        <td class="font-bold text-base-content/80">${name}</td>
+                        <td><code class="text-xs bg-base-200 px-2 py-1 rounded-md font-mono">${config.clientId}</code></td>
+                        <td class="text-right">
+                            <div class="flex gap-2 justify-end">
+                                <a href="/auth/${name}/login" target="_blank" class="btn btn-xs btn-primary">
+                                    <i class="ph ph-link"></i> Connect
+                                </a>
+                                <button type="button" onclick="window.editProvider('${name}')" class="btn btn-xs btn-outline">
+                                    <i class="ph ph-pencil-simple"></i> Edit
+                                </button>
+                            </div>
+                        </td>
+                    `;
                     providerTableBody.appendChild(row);
-                };
+                }
             } catch (error) {
                 console.error('Error fetching providers:', error);
-                providerTableBody.innerHTML = `<tr><td colspan="3" class="text-center text-error py-4">Failed to load: ${error.message}</td></tr>`;
+                providerTableBody.innerHTML = `<tr><td colspan="3" class="text-center text-error py-8">Failed to load: ${error.message}</td></tr>`;
             }
         }
 
@@ -238,17 +228,18 @@
             document.getElementById('clientSecret').value = config.clientSecret;
             document.getElementById('authUrl').value = config.authUrl;
             document.getElementById('tokenUrl').value = config.tokenUrl;
-            document.getElementById('redirectUri').value = config.redirectUri;
+            document.getElementById('redirectUri').value = config.redirectUri || '';
             document.getElementById('scope').value = config.scope;
 
             document.getElementById('configForm').scrollIntoView({ behavior: 'smooth' });
-
             document.getElementById('providerName').focus();
-        }        configForm.addEventListener('submit', async (e) => {
+        };
+
+        configForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const apiKey = apiKeyInput.value.trim();
             if (!apiKey) {
-                showNotification('Please enter your API Key in the top right corner', 'error');
+                showNotification('Please enter your Master API Key', 'error');
                 return;
             }
 
@@ -258,7 +249,7 @@
                 clientSecret: document.getElementById('clientSecret').value.trim(),
                 authUrl: document.getElementById('authUrl').value.trim(),
                 tokenUrl: document.getElementById('tokenUrl').value.trim(),
-                redirectUri: document.getElementById('redirectUri').value.trim(),
+                redirectUri: document.getElementById('redirectUri').value.trim() || undefined,
                 scope: document.getElementById('scope').value.trim(),
             };
 
@@ -272,10 +263,7 @@
                     body: JSON.stringify(config)
                 });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || 'Failed to save config');
-                }
+                if (!response.ok) throw new Error(await response.text());
 
                 showNotification('Configuration saved successfully!');
                 fetchProviders();

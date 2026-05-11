@@ -14,17 +14,18 @@ export class GenericProvider implements OAuthProvider {
 		private config: ProviderConfig,
 	) {}
 
-	getAuthUrl(): string {
+	getAuthUrl(state: string, redirectUri: string): string {
 		const params = new URLSearchParams({
 			response_type: "code",
 			client_id: this.config.clientId,
-			redirect_uri: this.config.redirectUri,
+			redirect_uri: redirectUri,
 			scope: this.config.scope,
+			state,
 		});
 		return `${this.config.authUrl}?${params.toString()}`;
 	}
 
-	async exchangeCode(code: string): Promise<TokenResponse> {
+	async exchangeCode(code: string, redirectUri: string): Promise<TokenResponse> {
 		const response = await fetch(this.config.tokenUrl, {
 			method: "POST",
 			headers: {
@@ -35,7 +36,7 @@ export class GenericProvider implements OAuthProvider {
 				code,
 				client_id: this.config.clientId,
 				client_secret: this.config.clientSecret,
-				redirect_uri: this.config.redirectUri,
+				redirect_uri: redirectUri,
 				grant_type: "authorization_code",
 			}),
 		});

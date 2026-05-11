@@ -15,25 +15,29 @@ authRoutes.get("/:provider/login", async (c) => {
 		return c.json(
 			{
 				error: "Configuration Not Found",
-				message: `Provider '${providerName}' is not configured in the registry. Please add it via the dashboard first.`,
+				message: `Provider '${providerName}' is not configured.`,
 			},
 			404,
 		);
 	}
 
 	const provider = new GenericProvider(providerName, providerConfig);
-	return c.redirect(provider.getAuthUrl());
+
+	const url = new URL(c.req.url);
+	const redirectUri = providerConfig.redirectUri || `${url.origin}/auth/callback`;
+
+	return c.redirect(provider.getAuthUrl(providerName, redirectUri));
 });
 
-authRoutes.get("/:provider/callback", async (c) => {
-	const providerName = c.req.param("provider");
+authRoutes.get("/callback", async (c) => {
+	const providerName = c.req.query("state");
 	const code = c.req.query("code");
 
-	if (!code) {
+	if (!providerName || !code) {
 		return c.json(
 			{
-				error: "Authorization Code Missing",
-				message: "The provider did not return an authorization code.",
+				error: "Invalid Request",
+				message: "Missing state (provider) or authorization code.",
 			},
 			400,
 		);
@@ -46,17 +50,20 @@ authRoutes.get("/:provider/callback", async (c) => {
 		return c.json(
 			{
 				error: "Configuration Not Found",
-				message: `Provider '${providerName}' was configured during login but its configuration is missing now.`,
+				message: `Provider '${providerName}' is not configured.`,
 			},
 			404,
 		);
 	}
 
+	const url = new URL(c.req.url);
+	const redirectUri = providerConfig.redirectUri || `${url.origin}/auth/callback`;
+
 	const provider = new GenericProvider(providerName, providerConfig);
 	const tokenManager = new TokenManager(redis, provider);
 
 	try {
-		const tokens = await provider.exchangeCode(code);
+		const tokens = await provider.exchangeCode(code, redirectUri);
 		await tokenManager.saveTokens(providerName, tokens);
 
 		return c.html(`
@@ -76,7 +83,6 @@ authRoutes.get("/:provider/callback", async (c) => {
 						</div>
 						<h2 class="card-title text-2xl font-bold">Authenticated!</h2>
 						<p class="opacity-70 mt-2">Successfully connected to <strong>${providerName}</strong>.</p>
-						<p class="text-sm opacity-50">You can now safely close this window and return to the dashboard.</p>
 						<div class="card-actions mt-6">
 							<a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
 						</div>
@@ -86,10 +92,7 @@ authRoutes.get("/:provider/callback", async (c) => {
 			</html>
 		`);
 	} catch (error) {
-		const errorMessage =
-			error instanceof Error
-				? error.message
-				: "An unexpected error occurred during token exchange.";
+		const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
 		console.error(`[OAuth Error] ${errorMessage}`);
 		return c.json(
 			{
