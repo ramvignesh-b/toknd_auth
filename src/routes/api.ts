@@ -17,7 +17,8 @@ apiRoutes.get("/status", async (c) => {
 	for (const provider of Object.keys(providers)) {
 		const accessToken = await redis.get(`provider:${provider}:access_token`);
 		const refreshToken = await redis.get(`provider:${provider}:refresh_token`);
-		status[provider] = { accessToken, refreshToken };
+		const lastUpdated = await redis.get(`provider:${provider}:last_updated`);
+		status[provider] = { accessToken, refreshToken, lastUpdated } as any;
 	}
 
 	return c.json(status);

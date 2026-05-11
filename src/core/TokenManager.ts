@@ -39,5 +39,6 @@ export class TokenManager {
 			tokens.expiresIn,
 		);
 		await this.redis.set(`provider:${providerName}:refresh_token`, tokens.refreshToken);
+		await this.redis.set(`provider:${providerName}:last_updated`, new Date().toISOString());
 	}
 }
