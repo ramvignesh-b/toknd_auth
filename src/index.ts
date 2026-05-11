@@ -12,6 +12,8 @@ const app = new Hono({ strict: false });
 app.use("*", logger());
 app.use("*", prettyJSON());
 
+app.get("/", (c) => c.redirect("/app"));
+
 app.route("/auth", authRoutes);
 app.route("/api/config", configRoutes);
 app.route("/api", apiRoutes);
