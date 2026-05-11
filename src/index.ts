@@ -4,7 +4,7 @@ import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "./config";
-import { API_PREFIX, API_VERSION, APP_VERSION, AUTH_PREFIX, DOCS_PREFIX } from "./constants";
+import { API_PREFIX, APP_VERSION, AUTH_PREFIX, DOCS_PREFIX } from "./constants";
 import { redis } from "./core/RedisClient";
 import { apiRoutes } from "./routes/api";
 import { authRoutes } from "./routes/auth";
@@ -18,18 +18,25 @@ app.doc(`${DOCS_PREFIX}/openapi.json`, {
 	openapi: "3.0.0",
 	info: {
 		version: APP_VERSION,
-		title: `toknd — Auth Broker API ${API_VERSION}`,
-		description: `Centralized token management and OAuth2 broker service (${API_VERSION}).`,
+		title: "toknd Auth Broker API",
+		description:
+			"A high-performance OAuth2 broker and token management service. Designed to centralize provider configurations and automate token lifecycle management across distributed systems.",
 	},
 	tags: [
-		{ name: "Tokens", description: "Standard API for retrieving and refreshing provider tokens." },
-		{ name: "Management", description: "Administrative API for managing provider configurations." },
+		{
+			name: "Tokens",
+			description: "Endpoint operations for accessing and force-refreshing active provider tokens.",
+		},
+		{
+			name: "Management",
+			description: "Administrative operations for provider lifecycle and configuration.",
+		},
 		{
 			name: "Auth (Internal)",
-			description:
-				"**NOTE: YOU MIGHT NOT HAVE TO USE THESE** These endpoints manage the OAuth2 flow and are orchestrated by the system.",
+			description: "System-level OAuth2 handshake and callback processing.",
 		},
 	],
+	security: [{ API_KEY: [] }],
 });
 
 app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", {
