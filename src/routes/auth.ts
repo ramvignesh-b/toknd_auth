@@ -1,15 +1,74 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { Hono } from "hono";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { ConfigManager } from "../core/ConfigManager";
 import { redis } from "../core/RedisClient";
 import { TokenManager } from "../core/TokenManager";
 import { GenericProvider } from "../providers/GenericProvider";
 
-const authRoutes = new Hono({ strict: false });
+const authRoutes = new OpenAPIHono();
 
-authRoutes.get("/:provider/login", async (c) => {
-	const providerName = c.req.param("provider");
+const AuthErrorResponse = z
+	.object({
+		error: z.string(),
+		message: z.string(),
+	})
+	.openapi("AuthError");
+
+// Routes
+const loginRoute = createRoute({
+	method: "get",
+	path: "/{provider}/login",
+	request: {
+		params: z.object({
+			provider: z.string().openapi({ example: "trakt" }),
+		}),
+	},
+	responses: {
+		302: {
+			description: "Redirect to the provider's OAuth2 authorization page",
+		},
+		404: {
+			content: { "application/json": { schema: AuthErrorResponse } },
+			description: "Provider not configured",
+		},
+	},
+});
+
+const callbackRoute = createRoute({
+	method: "get",
+	path: "/callback",
+	request: {
+		query: z.object({
+			state: z
+				.string()
+				.openapi({ description: "The provider name (passed as state during login)" }),
+			code: z.string().openapi({ description: "The authorization code from the provider" }),
+		}),
+	},
+	responses: {
+		200: {
+			description: "Success page indicating successful token exchange",
+			content: { "text/html": { schema: { type: "string" } } },
+		},
+		400: {
+			content: { "application/json": { schema: AuthErrorResponse } },
+			description: "Invalid request (missing state or code)",
+		},
+		404: {
+			content: { "application/json": { schema: AuthErrorResponse } },
+			description: "Provider configuration not found",
+		},
+		500: {
+			content: { "application/json": { schema: AuthErrorResponse } },
+			description: "Token exchange failure",
+		},
+	},
+});
+
+// Implementations
+authRoutes.openapi(loginRoute, async (c) => {
+	const providerName = c.req.valid("param").provider;
 	const configManager = new ConfigManager(redis);
 	const providerConfig = await configManager.getProviderConfig(providerName);
 
@@ -24,26 +83,14 @@ authRoutes.get("/:provider/login", async (c) => {
 	}
 
 	const provider = new GenericProvider(providerName, providerConfig);
-
 	const url = new URL(c.req.url);
 	const redirectUri = providerConfig.redirectUri || `${url.origin}/auth/callback`;
 
 	return c.redirect(provider.getAuthUrl(providerName, redirectUri));
 });
 
-authRoutes.get("/callback", async (c) => {
-	const providerName = c.req.query("state");
-	const code = c.req.query("code");
-
-	if (!providerName || !code) {
-		return c.json(
-			{
-				error: "Invalid Request",
-				message: "Missing state (provider) or authorization code.",
-			},
-			400,
-		);
-	}
+authRoutes.openapi(callbackRoute, async (c) => {
+	const { state: providerName, code } = c.req.valid("query");
 
 	const configManager = new ConfigManager(redis);
 	const providerConfig = await configManager.getProviderConfig(providerName);

@@ -25,14 +25,15 @@ app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", {
 	scheme: "bearer",
 });
 
-// Scalar API
+// Scalar API Reference
 app.get(
-	"/ui",
+	"/api",
 	Scalar({
 		theme: "solarized",
 		url: "/doc",
 	}),
 );
+app.get("/docs", (c) => c.redirect("/api"));
 
 app.use("*", logger());
 app.use("*", prettyJSON());
