@@ -43,7 +43,10 @@ document.addEventListener("alpine:init", () => {
 				await this.fetchProviders();
 				this.isUnlocked = true;
 			} catch (err) {
-				this.showNotification(`Failed to unlock: ${err.message}`, "error");
+				this.showNotification(`Failed to unlock: ${err.message}. Check your API Key`, "error");
+				localStorage.removeItem("toknd_api_key");
+				this.isUnlocked = false;
+				this.apiKey = "";
 			} finally {
 				this.loading = false;
 			}
