@@ -33,12 +33,8 @@
             letter-spacing: 0.05em;
         }
 
-        /* UI elements that benefit from Geist Sans */
-        .btn,
-        .card-title,
-        .navbar a,
-        .label-text,
-        .tooltip {
+        /* UI elements prioritization */
+        .btn, .card-title, .navbar a, .label-text, .tooltip {
             font-family: var(--font-sans);
         }
     </style>
@@ -333,7 +329,7 @@
                 }
 
                 renderRegistry();
-                localStorage.setItem('auth_server_api_key', apiKey);
+                localStorage.setItem('toknd_api_key', apiKey);
             } catch (error) {
                 console.error('Error:', error);
                 providerRegistry.innerHTML = `<div class="col-span-full text-center text-error py-12 font-medium">${error.message}</div>`;
@@ -505,14 +501,15 @@
             }
         });
 
-        // Initialize from localStorage
-        const savedApiKey = localStorage.getItem('auth_server_api_key');
-        if (savedApiKey) {
-            apiKeyInput.value = savedApiKey;
-            fetchProviders();
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('toknd_api_key');
+            if (savedKey) {
+                apiKeyInput.value = savedKey;
+                fetchProviders();
+            }
+            setDefaultRedirectUri();
+        });
 
-        // Add Enter key listener for API Key input
         apiKeyInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 fetchProviders();
