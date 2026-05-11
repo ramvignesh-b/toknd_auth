@@ -83,7 +83,12 @@ export const Dashboard = () => (
 							<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
 						</button>
 					</div>
-					<button x-on:click="unlock()" type="submit" class="btn btn-primary btn-sm join-item px-6" x-bind:disabled="loading">
+					<button
+						x-on:click="unlock()"
+						type="submit"
+						class="btn btn-primary btn-sm join-item px-6"
+						x-bind:disabled="loading"
+					>
 						<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
 						<span class="loading loading-spinner loading-xs" x-show="loading"></span>
 						<span class="ml-1 hidden md:inline" x-text="loading ? 'Unlocking...' : 'Unlock'"></span>
@@ -111,24 +116,51 @@ export const Dashboard = () => (
 										</span>
 									</span>
 								</label>
-								<input type="text" id="providerName" x-model="form.providerName" placeholder="e.g. trakt" required class="input input-bordered w-full focus:input-primary" />
+								<input
+									type="text"
+									id="providerName"
+									x-model="form.providerName"
+									placeholder="e.g. trakt"
+									required
+									class="input input-bordered w-full focus:input-primary"
+								/>
 							</div>
 
-							<div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">Credentials</div>
+							<div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">
+								Credentials
+							</div>
 
 							<div class="form-control">
 								<label htmlFor="clientId" class="label py-1">
 									<span class="label-text">Client ID</span>
 								</label>
-								<input type="text" id="clientId" x-model="form.clientId" placeholder="OAuth client id" required class="input input-bordered w-full focus:input-primary" />
+								<input
+									type="text"
+									id="clientId"
+									x-model="form.clientId"
+									placeholder="OAuth client id"
+									required
+									class="input input-bordered w-full focus:input-primary"
+								/>
 							</div>
 							<div class="form-control" x-data="{ show: false }">
 								<label htmlFor="clientSecret" class="label py-1">
 									<span class="label-text">Client Secret</span>
 								</label>
 								<div class="relative">
-									<input x-bind:type="show ? 'text' : 'password'" id="clientSecret" x-model="form.clientSecret" placeholder="OAuth client secret" required class="input input-bordered w-full focus:input-primary pr-12" />
-									<button type="button" x-on:click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square">
+									<input
+										x-bind:type="show ? 'text' : 'password'"
+										id="clientSecret"
+										x-model="form.clientSecret"
+										placeholder="OAuth client secret"
+										required
+										class="input input-bordered w-full focus:input-primary pr-12"
+									/>
+									<button
+										type="button"
+										x-on:click="show = !show"
+										class="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
+									>
 										<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-lg opacity-40' : 'ph-duotone ph-eye text-lg opacity-40'"></i>
 									</button>
 								</div>
@@ -140,37 +172,73 @@ export const Dashboard = () => (
 								<label htmlFor="authUrl" class="label py-1">
 									<span class="label-text">Auth URL</span>
 								</label>
-								<input type="url" id="authUrl" x-model="form.authUrl" placeholder="https://trakt.tv/oauth/authorize" required class="input input-bordered w-full focus:input-primary" />
+								<input
+									type="url"
+									id="authUrl"
+									x-model="form.authUrl"
+									placeholder="https://trakt.tv/oauth/authorize"
+									required
+									class="input input-bordered w-full focus:input-primary"
+								/>
 							</div>
 							<div class="form-control">
 								<label htmlFor="tokenUrl" class="label py-1">
 									<span class="label-text">Token URL</span>
 								</label>
-								<input type="url" id="tokenUrl" x-model="form.tokenUrl" placeholder="https://api.trakt.tv/oauth/token" required class="input input-bordered w-full focus:input-primary" />
+								<input
+									type="url"
+									id="tokenUrl"
+									x-model="form.tokenUrl"
+									placeholder="https://api.trakt.tv/oauth/token"
+									required
+									class="input input-bordered w-full focus:input-primary"
+								/>
 							</div>
 							<div class="form-control">
 								<label htmlFor="redirectUri" class="label py-1">
 									<span class="label-text">Redirect URI</span>
 								</label>
 								<div class="relative group">
-									<input type="url" id="redirectUri" x-bind:value="getRedirectUri()" readonly class="input input-bordered w-full pr-12 focus:outline-none cursor-default opacity-80" />
-									<button type="button" x-on:click="copyToClipboard(getRedirectUri())" class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors">
+									<input
+										type="url"
+										id="redirectUri"
+										x-bind:value="getRedirectUri()"
+										readonly
+										class="input input-bordered w-full pr-12 focus:outline-none cursor-default opacity-80"
+									/>
+									<button
+										type="button"
+										x-on:click="copyToClipboard(getRedirectUri())"
+										class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors"
+									>
 										<i class="ph-duotone ph-copy text-lg"></i>
 									</button>
 								</div>
 								<div class="label py-0.5">
-									<span class="label-text-alt opacity-40 italic text-xs">Must match provider's callback URL</span>
+									<span class="label-text-alt opacity-40 italic text-xs">
+										Must match provider's callback URL
+									</span>
 								</div>
 							</div>
 							<div class="form-control">
 								<label htmlFor="scope" class="label py-1">
 									<span class="label-text">Scope</span>
 								</label>
-								<input type="text" id="scope" x-model="form.scope" placeholder="public" class="input input-bordered w-full focus:input-primary" />
+								<input
+									type="text"
+									id="scope"
+									x-model="form.scope"
+									placeholder="public"
+									class="input input-bordered w-full focus:input-primary"
+								/>
 							</div>
 
 							<div class="card-actions pt-4">
-								<button type="submit" class="btn btn-primary w-full shadow-md" x-bind:disabled="loading">
+								<button
+									type="submit"
+									class="btn btn-primary w-full shadow-md"
+									x-bind:disabled="loading"
+								>
 									<i class="ph ph-plus-bold mr-1"></i>
 									Save Configuration
 								</button>
@@ -186,14 +254,22 @@ export const Dashboard = () => (
 								<div class="w-2 h-6 bg-primary rounded-full"></div>
 								<h2 class="card-title text-xl font-semibold">Provider Registry</h2>
 							</div>
-							<button type="button" x-on:click="fetchProviders()" class="btn btn-sm btn-base" x-bind:disabled="!isUnlocked || loading">
+							<button
+								type="button"
+								x-on:click="fetchProviders()"
+								class="btn btn-sm btn-base"
+								x-bind:disabled="!isUnlocked || loading"
+							>
 								<i x-bind:class="loading ? 'ph ph-arrows-clockwise animate-spin mr-1' : 'ph ph-arrows-clockwise mr-1'"></i>
 								Refresh List
 							</button>
 						</div>
 
 						<div class="relative min-h-[400px]">
-							<div x-show="loading && providers.length > 0" class="absolute inset-0 bg-base-100/50 backdrop-blur-md z-10 flex items-center justify-center">
+							<div
+								x-show="loading && providers.length > 0"
+								class="absolute inset-0 bg-base-100/50 backdrop-blur-md z-10 flex items-center justify-center"
+							>
 								<span class="loading loading-spinner loading-lg text-primary"></span>
 							</div>
 
@@ -204,74 +280,151 @@ export const Dashboard = () => (
 								</div>
 							</div>
 
-							<div x-show="isUnlocked && providers.length === 0 && !loading" class="p-20 text-center opacity-30">
+							<div
+								x-show="isUnlocked && providers.length === 0 && !loading"
+								class="p-20 text-center opacity-30"
+							>
 								<div class="flex flex-col items-center gap-3">
 									<i class="ph ph-folder-open text-6xl"></i>
 									<p class="font-medium">No providers configured yet</p>
 								</div>
 							</div>
 
-							<div x-show="isUnlocked && providers.length > 0" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div
+								x-show="isUnlocked && providers.length > 0"
+								class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4"
+							>
 								<template x-for="provider in providers" x-bind:key="provider.name">
 									<div class="card bg-base-200/50 border border-base-300 shadow-sm hover:shadow-md transition-all group">
 										<div class="card-body p-5">
 											<div class="flex flex-col mb-4">
-												<span x-text="provider.name" class="text-lg font-black text-base-content/90 uppercase"></span>
-												<span x-text="provider.config.clientId" x-bind:title="provider.config.clientId" class="text-xs opacity-40 truncate font-mono"></span>
+												<span
+													x-text="provider.name"
+													class="text-lg font-black text-base-content/90 uppercase"
+												></span>
+												<span
+													x-text="provider.config.clientId"
+													x-bind:title="provider.config.clientId"
+													class="text-xs opacity-40 truncate font-mono"
+												></span>
 											</div>
 
 											<div class="space-y-4">
 												<div x-data="{ show: false }">
-													<div class="text-xs uppercase font-semibold opacity-30 block mb-1">Access Token</div>
-													<div x-show="provider.status.accessToken" class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3">
-														<input x-bind:type="show ? 'text' : 'password'" x-bind:value="provider.status.accessToken" readonly class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono" />
+													<div class="text-xs uppercase font-semibold opacity-30 block mb-1">
+														Access Token
+													</div>
+													<div
+														x-show="provider.status.accessToken"
+														class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3"
+													>
+														<input
+															x-bind:type="show ? 'text' : 'password'"
+															x-bind:value="provider.status.accessToken"
+															readonly
+															class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono"
+														/>
 														<div class="flex gap-1">
-															<button type="button" x-on:click="show = !show" class="btn btn-ghost btn-xs btn-square">
+															<button
+																type="button"
+																x-on:click="show = !show"
+																class="btn btn-ghost btn-xs btn-square"
+															>
 																<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
 															</button>
-															<button type="button" x-on:click="copyToClipboard(provider.status.accessToken)" class="btn btn-ghost btn-xs btn-square">
+															<button
+																type="button"
+																x-on:click="copyToClipboard(provider.status.accessToken)"
+																class="btn btn-ghost btn-xs btn-square"
+															>
 																<i class="ph-duotone ph-copy-simple text-base opacity-50"></i>
 															</button>
 														</div>
 													</div>
-													<div x-show="!provider.status.accessToken" class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40">Not Authenticated</div>
+													<div
+														x-show="!provider.status.accessToken"
+														class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40"
+													>
+														Not Authenticated
+													</div>
 												</div>
 
 												<div x-data="{ show: false }">
-													<div class="text-xs uppercase font-semibold opacity-30 block mb-1">Refresh Token</div>
-													<div x-show="provider.status.refreshToken" class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3">
-														<input x-bind:type="show ? 'text' : 'password'" x-bind:value="provider.status.refreshToken" readonly class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono" />
+													<div class="text-xs uppercase font-semibold opacity-30 block mb-1">
+														Refresh Token
+													</div>
+													<div
+														x-show="provider.status.refreshToken"
+														class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3"
+													>
+														<input
+															x-bind:type="show ? 'text' : 'password'"
+															x-bind:value="provider.status.refreshToken"
+															readonly
+															class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono"
+														/>
 														<div class="flex gap-1">
-															<button type="button" x-on:click="show = !show" class="btn btn-ghost btn-xs btn-square">
+															<button
+																type="button"
+																x-on:click="show = !show"
+																class="btn btn-ghost btn-xs btn-square"
+															>
 																<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
 															</button>
-															<button type="button" x-on:click="copyToClipboard(provider.status.refreshToken)" class="btn btn-ghost btn-xs btn-square">
+															<button
+																type="button"
+																x-on:click="copyToClipboard(provider.status.refreshToken)"
+																class="btn btn-ghost btn-xs btn-square"
+															>
 																<i class="ph-duotone ph-copy-simple text-base opacity-50"></i>
 															</button>
 														</div>
 													</div>
-													<div x-show="!provider.status.refreshToken" class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40">Not Authenticated</div>
+													<div
+														x-show="!provider.status.refreshToken"
+														class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40"
+													>
+														Not Authenticated
+													</div>
 												</div>
 											</div>
 
 											<div class="divider my-3 opacity-10"></div>
 											<div class="flex justify-between items-center mb-4">
 												<span class="text-xs font-semibold opacity-30 uppercase">Last Updated</span>
-												<span x-text="formatTime(provider.status.lastUpdated)" class="text-xs font-medium opacity-60"></span>
+												<span
+													x-text="formatTime(provider.status.lastUpdated)"
+													class="text-xs font-medium opacity-60"
+												></span>
 											</div>
 
 											<div class="flex flex-col gap-2">
 												<div class="grid grid-cols-2 gap-2">
-													<button type="button" x-on:click="window.open('/auth/' + provider.name + '/login', '_blank')" class="btn btn-primary btn-sm">
+													<button
+														type="button"
+														x-on:click="window.open('/auth/' + provider.name + '/login', '_blank')"
+														class="btn btn-primary btn-sm"
+													>
 														<i class="ph-bold ph-link"></i> Connect
 													</button>
-													<button type="button" x-on:click="editProvider(provider)" class="btn btn-secondary btn-sm">
+													<button
+														type="button"
+														x-on:click="editProvider(provider)"
+														class="btn btn-secondary btn-sm"
+													>
 														<i class="ph-bold ph-pencil-simple"></i> Edit
 													</button>
 												</div>
-												<button type="button" x-on:click="forceRefresh(provider.name)" class="btn btn-base w-full" x-bind:disabled="loading">
+												<button
+													type="button"
+													x-on:click="forceRefresh(provider.name)"
+													class="btn btn-base w-full"
+													x-bind:disabled="loading"
+												>
 													<i class="ph-bold ph-arrows-clockwise text-base mr-1"></i>
-													<span class="text-xs uppercase font-bold tracking-widest">Refresh Tokens</span>
+													<span class="text-xs uppercase font-bold tracking-widest">
+														Refresh Tokens
+													</span>
 												</button>
 											</div>
 										</div>
@@ -285,7 +438,10 @@ export const Dashboard = () => (
 		</div>
 
 		<div class="toast toast-center toast-top z-100" x-show="notification.show">
-			<div class="alert shadow-lg border border-base-300" x-bind:class="notification.type === 'error' ? 'alert-error' : 'alert-success'">
+			<div
+				class="alert shadow-lg border border-base-300"
+				x-bind:class="notification.type === 'error' ? 'alert-error' : 'alert-success'"
+			>
 				<span x-text="notification.message"></span>
 			</div>
 		</div>
@@ -301,11 +457,13 @@ export const Success = (props: { provider: string }) => (
 						<i class="ph-duotone ph-check-circle text-5xl"></i>
 					</div>
 
-					<h2 class="card-title text-3xl font-black tracking-tight mb-2 uppercase">Authenticated!</h2>
+					<h2 class="card-title text-3xl font-black tracking-tight mb-2 uppercase">
+						Authenticated!
+					</h2>
 					<p class="text-base-content/60 leading-relaxed">
 						Successfully connected to{" "}
-						<span class="font-bold text-base-content uppercase">{props.provider}</span>.
-						You can now close this window or return to the dashboard.
+						<span class="font-bold text-base-content uppercase">{props.provider}</span>. You can now
+						close this window or return to the dashboard.
 					</p>
 
 					<div class="divider my-8 opacity-50"></div>
