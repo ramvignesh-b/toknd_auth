@@ -4,9 +4,9 @@ import { z } from "zod";
 export const ProviderConfigSchema = z.object({
 	clientId: z.string(),
 	clientSecret: z.string(),
-	redirectUri: z.string().url().optional(),
-	authUrl: z.string().url(),
-	tokenUrl: z.string().url(),
+	redirectUri: z.url().optional(),
+	authUrl: z.url(),
+	tokenUrl: z.url(),
 	scope: z.string(),
 });
 
