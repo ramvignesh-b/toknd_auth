@@ -50,9 +50,8 @@ describe("Auth Integration", () => {
 
 		const res = await app.request("/auth/callback?state=trakt&code=temporary-auth-code");
 
-		expect(res.status).toBe(200);
-		const html = await res.text();
-		expect(html).toContain("trakt");
+		expect(res.status).toBe(302);
+		expect(res.headers.get("Location")).toBe("/app/success?provider=trakt");
 		expect(redis.set).toHaveBeenCalled();
 		expect(fetchSpy).toHaveBeenCalled();
 	});
