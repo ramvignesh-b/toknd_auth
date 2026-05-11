@@ -55,56 +55,112 @@
 
                     <form id="configForm" class="space-y-4">
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Provider
-                                    ID</span></label>
+                            <label class="label py-1">
+                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                    Provider ID
+                                    <div class="tooltip tooltip-top"
+                                        data-tip="Internal name for this service. This will define your login URL (e.g. /auth/trakt/login).">
+                                        <i class="ph ph-info opacity-50 cursor-help"></i>
+                                    </div>
+                                </span>
+                            </label>
                             <input type="text" id="providerName" placeholder="e.g. trakt" required
-                                class="input input-bordered focus:input-primary" />
+                                class="input input-bordered w-full focus:input-primary" />
                         </div>
 
                         <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-[10px]">Credentials
                         </div>
 
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client
-                                    ID</span></label>
+                            <label class="label py-1">
+                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                    Client ID
+                                    <div class="tooltip tooltip-top"
+                                        data-tip="Found in the 'API' or 'Developer' section of the provider. Sometimes called 'App ID' or 'Consumer Key'.">
+                                        <i class="ph ph-info opacity-50 cursor-help"></i>
+                                    </div>
+                                </span>
+                            </label>
                             <input type="text" id="clientId" placeholder="OAuth client id" required
-                                class="input input-bordered focus:input-primary" />
+                                class="input input-bordered w-full focus:input-primary" />
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Client
-                                    Secret</span></label>
+                            <label class="label py-1">
+                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                    Client Secret
+                                    <div class="tooltip tooltip-top"
+                                        data-tip="Found next to the Client ID. This is your private key—never share it or put it in client-side code.">
+                                        <i class="ph ph-info opacity-50 cursor-help"></i>
+                                    </div>
+                                </span>
+                            </label>
                             <input type="password" id="clientSecret" placeholder="OAuth client secret" required
-                                class="input input-bordered focus:input-primary" />
+                                class="input input-bordered w-full focus:input-primary" />
                         </div>
 
                         <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-[10px]">Endpoints
                         </div>
 
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Auth
-                                    URL</span></label>
+                            <label class="label py-1">
+                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                    Auth URL
+                                    <div class="tooltip tooltip-top"
+                                        data-tip="The page where users click 'Authorize'. Usually found in OAuth2 docs under 'Endpoints' or 'Authorize'.">
+                                        <i class="ph ph-info opacity-50 cursor-help"></i>
+                                    </div>
+                                </span>
+                            </label>
                             <input type="url" id="authUrl" placeholder="https://trakt.tv/oauth/authorize" required
-                                class="input input-bordered focus:input-primary" />
-                        </div>
-                        <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold opacity-70">Token
-                                    URL</span></label>
-                            <input type="url" id="tokenUrl" placeholder="https://api.trakt.tv/oauth/token" required
-                                class="input input-bordered focus:input-primary" />
+                                class="input input-bordered w-full focus:input-primary" />
                         </div>
                         <div class="form-control">
                             <label class="label py-1">
-                                <span class="label-text font-semibold opacity-70">Redirect URI</span>
-                                <span class="label-text-alt opacity-50 italic">Optional</span>
+                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                    Token URL
+                                    <div class="tooltip tooltip-top"
+                                        data-tip="The background API used to trade the code for a token. Usually ends in '/token' or '/access_token'.">
+                                        <i class="ph ph-info opacity-50 cursor-help"></i>
+                                    </div>
+                                </span>
                             </label>
-                            <input type="url" id="redirectUri" placeholder="Auto-generated if empty"
-                                class="input input-bordered focus:input-primary" />
+                            <input type="url" id="tokenUrl" placeholder="https://api.trakt.tv/oauth/token" required
+                                class="input input-bordered w-full focus:input-primary" />
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span
-                                    class="label-text font-semibold opacity-70">Scope</span></label>
+                            <label class="label py-1">
+                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                    Redirect URI
+                                    <div class="tooltip tooltip-top"
+                                        data-tip="Copy this URL and paste it into the 'Redirect URI' or 'Callback URL' field in your OAuth provider's settings.">
+                                        <i class="ph ph-info opacity-50 cursor-help"></i>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="relative group">
+                                <input type="url" id="redirectUri" readonly
+                                    class="input input-bordered w-full pr-12 focus:outline-none cursor-default opacity-80" />
+                                <button type="button" onclick="copyRedirectUri()" 
+                                    class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors">
+                                    <i class="ph ph-copy text-sm"></i>
+                                </button>
+                            </div>
+                            <label class="label py-0.5">
+                                <span class="label-text-alt opacity-40 italic text-[10px]">Must match provider's callback URL</span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-1">
+                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                    Scope
+                                    <div class="tooltip tooltip-top"
+                                        data-tip="Determines what data you're allowed to access. Multiple scopes are usually space-separated.">
+                                        <i class="ph ph-info opacity-50 cursor-help"></i>
+                                    </div>
+                                </span>
+                            </label>
                             <input type="text" id="scope" placeholder="public"
-                                class="input input-bordered focus:input-primary" />
+                                class="input input-bordered w-full focus:input-primary" />
                         </div>
 
                         <div class="card-actions pt-4">
@@ -172,8 +228,25 @@
     <script>
         const apiKeyInput = document.getElementById('apiKey');
         const configForm = document.getElementById('configForm');
-        const providerTableBody = document.getElementById('providerTableBody');
+        const redirectUriInput = document.getElementById('redirectUri');
 
+        function setDefaultRedirectUri() {
+            if (redirectUriInput) {
+                redirectUriInput.value = `${window.location.origin}/auth/callback`;
+            }
+        }
+
+        window.copyRedirectUri = () => {
+            if (redirectUriInput) {
+                navigator.clipboard.writeText(redirectUriInput.value).then(() => {
+                    showNotification('Redirect URI copied!');
+                });
+            }
+        };
+
+        setDefaultRedirectUri();
+
+        const providerTableBody = document.getElementById('providerTableBody');
         let providerData = {};
         let tokenStatus = {};
 
@@ -306,7 +379,7 @@
             document.getElementById('clientSecret').value = config.clientSecret;
             document.getElementById('authUrl').value = config.authUrl;
             document.getElementById('tokenUrl').value = config.tokenUrl;
-            document.getElementById('redirectUri').value = config.redirectUri || '';
+            setDefaultRedirectUri();
             document.getElementById('scope').value = config.scope;
 
             document.getElementById('configForm').scrollIntoView({ behavior: 'smooth' });
@@ -346,6 +419,7 @@
                 showNotification('Configuration saved successfully!');
                 fetchProviders();
                 configForm.reset();
+                setDefaultRedirectUri();
             } catch (error) {
                 console.error('Error saving config:', error);
                 showNotification(error.message, 'error');
