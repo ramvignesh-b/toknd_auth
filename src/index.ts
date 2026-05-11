@@ -74,6 +74,6 @@ app.get("/health", async (c) => {
 export { app };
 
 export default {
-	port: Number.parseInt(config.PORT, 10),
+	port: Number.parseInt(config.APP_PORT, 10),
 	fetch: app.fetch,
 };

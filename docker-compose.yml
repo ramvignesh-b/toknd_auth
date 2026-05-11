@@ -3,22 +3,19 @@ services:
     build: .
     restart: always
     ports:
-      - "${PORT:-3000}:3000"
+      - "${APP_PORT:-3000}:3000"
     environment:
-      - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - API_KEY=${API_KEY}
     depends_on:
       - redis
-    healthcheck:
-      test: [ "CMD", "bun", "-e", "fetch('http://localhost:3000/health').then(res => res.ok ? process.exit(0) : process.exit(1)).catch(e => process.exit(1))" ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
 
   redis:
     image: redis:alpine
     restart: always
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis-data:/data
 
