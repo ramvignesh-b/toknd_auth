@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { ConfigManager } from "../core/ConfigManager";
 import { redis } from "../core/RedisClient";
@@ -115,10 +113,7 @@ authRoutes.openapi(callbackRoute, async (c) => {
 		const tokens = await provider.exchangeCode(code, redirectUri);
 		await tokenManager.saveTokens(providerName, tokens);
 
-		const htmlPath = join(process.cwd(), "src/views/success.html");
-		let html = await readFile(htmlPath, "utf-8");
-		html = html.replaceAll("__PROVIDER_NAME__", providerName);
-		return c.html(html);
+		return c.redirect(`/app/success?provider=${providerName}`);
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
 		console.error(`[OAuth Error] ${errorMessage}`);

@@ -1,5 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
+import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "./config";
@@ -41,6 +42,7 @@ app.use("*", prettyJSON());
 
 app.get("/", (c) => c.redirect("/app"));
 
+app.get("/app/dashboard.js", serveStatic({ path: "./src/views/dashboard.js" }));
 app.route("/auth", authRoutes);
 app.route("/api/config", configRoutes);
 app.route("/api", apiRoutes);
