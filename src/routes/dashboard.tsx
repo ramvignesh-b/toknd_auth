@@ -34,7 +34,7 @@ export const Layout = (props: { title: string; children: Child }) => (
 			>
 				{props.children}
 				<script src="/app/dashboard.js"></script>
-				<script src="//unpkg.com/alpinejs@3.15.12/dist/cdn.min.js" defer></script>
+				<script src="//unpkg.com/alpinejs@3" defer></script>
 			</body>
 		</html>
 	</>
