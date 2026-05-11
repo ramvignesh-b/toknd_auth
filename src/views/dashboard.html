@@ -11,7 +11,9 @@
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --font-sans: "DM Sans", sans-serif;
@@ -33,8 +35,11 @@
             letter-spacing: 0.05em;
         }
 
-        /* UI elements prioritization */
-        .btn, .card-title, .navbar a, .label-text, .tooltip {
+        .btn,
+        .card-title,
+        .navbar a,
+        .label-text,
+        .tooltip {
             font-family: var(--font-sans);
         }
     </style>
@@ -54,20 +59,20 @@
             </div>
         </div>
         <div class="flex-none hidden sm:flex">
-            <div class="join border border-base-300 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
+            <div
+                class="join border border-base-300 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
                 <div class="join-item flex items-center px-4 bg-base-100">
                     <i class="ph-duotone ph-key text-primary text-lg animate-pulse-slow"></i>
                 </div>
                 <div class="relative flex-1">
                     <input type="password" id="apiKey" placeholder="API_KEY"
                         class="input join-item input-sm bg-transparent border-none focus:outline-none w-48 lg:w-64 text-xs pr-10 font-mono" />
-                    <button type="button" onclick="window.toggleToken('apiKey')" 
+                    <button type="button" onclick="window.toggleToken('apiKey')"
                         class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square">
                         <i class="ph-duotone ph-eye text-base opacity-50" id="eye-apiKey"></i>
                     </button>
                 </div>
-                <button onclick="fetchProviders()" type="button"
-                    class="btn btn-primary btn-sm join-item px-6">
+                <button onclick="fetchProviders()" type="button" class="btn btn-primary btn-sm join-item px-6">
                     <i class="ph-duotone ph-lock-key-open text-lg"></i>
                     <span class="ml-1 hidden md:inline">Unlock</span>
                 </button>
@@ -95,7 +100,7 @@
                                     </div>
                                 </span>
                             </label>
-                            <input type="text" id="providerName" placeholder="e.g. trakt" required
+                            <input type="text" id="providerName" name="providerName" placeholder="e.g. trakt" required
                                 class="input input-bordered w-full focus:input-primary" />
                         </div>
 
@@ -112,7 +117,7 @@
                                     </div>
                                 </span>
                             </label>
-                            <input type="text" id="clientId" placeholder="OAuth client id" required
+                            <input type="text" id="clientId" name="clientId" placeholder="OAuth client id" required
                                 class="input input-bordered w-full focus:input-primary" />
                         </div>
                         <div class="form-control">
@@ -126,7 +131,8 @@
                                 </span>
                             </label>
                             <div class="relative">
-                                <input type="password" id="clientSecret" placeholder="OAuth client secret" required
+                                <input type="password" id="clientSecret" name="clientSecret"
+                                    placeholder="OAuth client secret" required
                                     class="input input-bordered w-full focus:input-primary pr-12" />
                                 <button type="button" onclick="window.toggleToken('clientSecret')"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square">
@@ -148,8 +154,8 @@
                                     </div>
                                 </span>
                             </label>
-                            <input type="url" id="authUrl" placeholder="https://trakt.tv/oauth/authorize" required
-                                class="input input-bordered w-full focus:input-primary" />
+                            <input type="url" id="authUrl" name="authUrl" placeholder="https://trakt.tv/oauth/authorize"
+                                required class="input input-bordered w-full focus:input-primary" />
                         </div>
                         <div class="form-control">
                             <label class="label py-1">
@@ -161,7 +167,8 @@
                                     </div>
                                 </span>
                             </label>
-                            <input type="url" id="tokenUrl" placeholder="https://api.trakt.tv/oauth/token" required
+                            <input type="url" id="tokenUrl" name="tokenUrl"
+                                placeholder="https://api.trakt.tv/oauth/token" required
                                 class="input input-bordered w-full focus:input-primary" />
                         </div>
                         <div class="form-control">
@@ -175,7 +182,7 @@
                                 </span>
                             </label>
                             <div class="relative group">
-                                <input type="url" id="redirectUri" readonly
+                                <input type="url" id="redirectUri" name="redirectUri" readonly
                                     class="input input-bordered w-full pr-12 focus:outline-none cursor-default opacity-80" />
                                 <button type="button" onclick="copyRedirectUri()"
                                     class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors">
@@ -197,7 +204,7 @@
                                     </div>
                                 </span>
                             </label>
-                            <input type="text" id="scope" placeholder="public"
+                            <input type="text" id="scope" name="scope" placeholder="public"
                                 class="input input-bordered w-full focus:input-primary" />
                         </div>
 
@@ -218,7 +225,7 @@
                             <div class="w-2 h-6 bg-primary rounded-full"></div>
                             <h2 class="card-title text-xl font-semibold">Provider Registry</h2>
                         </div>
-                        <button type="button" onclick="fetchProviders()" class="btn btn-sm btn-ghost border-base-300">
+                        <button type="button" onclick="fetchProviders()" class="btn btn-sm btn-base">
                             <i id="refreshIcon" class="ph ph-arrows-clockwise mr-1"></i>
                             Refresh
                         </button>
@@ -391,16 +398,16 @@
 
                         <div class="flex flex-col gap-2">
                             <div class="grid grid-cols-2 gap-2">
-                                <a href="/auth/${name}/login" target="_blank" class="btn btn-primary btn-sm shadow-sm">
+                                <a href="/auth/${name}/login" target="_blank" class="btn btn-primary btn-sm">
                                     <i class="ph-bold ph-link"></i> Connect
                                 </a>
-                                <button type="button" onclick="window.editProvider('${name}')" class="btn btn-outline btn-sm">
+                                <button type="button" onclick="window.editProvider('${name}')" class="btn btn-secondary btn-sm">
                                     <i class="ph-bold ph-pencil-simple"></i> Edit
                                 </button>
                             </div>
                             <button type="button" onclick="window.forceRefresh('${name}')" id="btn-refresh-${name}"
-                                class="btn btn-ghost btn-sm border border-base-300 w-full">
-                                <i class="ph-duotone ph-arrows-clockwise text-base mr-1" id="icon-refresh-${name}"></i> 
+                                class="btn btn-base w-full">
+                                <i class="ph-duotone ph-arrows-clockwise text-base mr-1" id="icon-refresh-${name}"></i>
                                 <span class="text-[10px] uppercase font-bold tracking-wider">Manual Refresh</span>
                             </button>
                         </div>
@@ -505,24 +512,17 @@
                 return;
             }
 
-            const name = document.getElementById('providerName').value.trim();
-            const config = {
-                clientId: document.getElementById('clientId').value.trim(),
-                clientSecret: document.getElementById('clientSecret').value.trim(),
-                authUrl: document.getElementById('authUrl').value.trim(),
-                tokenUrl: document.getElementById('tokenUrl').value.trim(),
-                redirectUri: document.getElementById('redirectUri').value.trim() || undefined,
-                scope: document.getElementById('scope').value.trim(),
-            };
+            const formData = new FormData(configForm);
+            const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch(`/api/config/${name}`, {
+                const response = await fetch(`/api/config/${data.providerName}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${apiKey}`
                     },
-                    body: JSON.stringify(config)
+                    body: JSON.stringify(data)
                 });
 
                 if (!response.ok) throw new Error(await response.text());
