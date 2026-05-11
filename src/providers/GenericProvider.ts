@@ -5,7 +5,7 @@ import type { OAuthProvider, TokenResponse } from "./interface";
 const TokenResponseSchema = z.object({
 	access_token: z.string(),
 	refresh_token: z.string().optional(),
-	expires_in: z.number(),
+	expires_in: z.coerce.number(),
 });
 
 export class GenericProvider implements OAuthProvider {
