@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Server Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-base-200 min-h-screen">
+    <div class="navbar bg-base-100 shadow-lg px-8">
+        <div class="flex-1">
+            <a class="btn btn-ghost normal-case text-xl font-bold">Auth Server</a>
+        </div>
+        <div class="flex-none gap-4">
+            <div class="form-control">
+                <div class="input-group">
+                    <input type="password" id="apiKey" placeholder="API Key"
+                        class="input input-bordered w-32 md:w-auto" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Configuration Form -->
+            <div class="card bg-base-100 shadow-xl col-span-1">
+                <div class="card-body">
+                    <h2 class="card-title text-primary">Add/Update Provider</h2>
+                    <form id="configForm" class="space-y-4">
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-semibold">Provider Name</span></label>
+                            <input type="text" id="providerName" placeholder="e.g. trakt" required
+                                class="input input-bordered" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-semibold">Client ID</span></label>
+                            <input type="text" id="clientId" required class="input input-bordered" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-semibold">Client Secret</span></label>
+                            <input type="password" id="clientSecret" required class="input input-bordered" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-semibold">Auth URL</span></label>
+                            <input type="url" id="authUrl" placeholder="https://..." required
+                                class="input input-bordered" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-semibold">Token URL</span></label>
+                            <input type="url" id="tokenUrl" placeholder="https://..." required
+                                class="input input-bordered" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-semibold">Redirect URI</span></label>
+                            <input type="url" id="redirectUri" placeholder="http://localhost:3000/auth/.../callback"
+                                required class="input input-bordered" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-semibold">Scope</span></label>
+                            <input type="text" id="scope" placeholder="public" class="input input-bordered" />
+                        </div>
+                        <div class="card-actions justify-end mt-4">
+                            <button type="submit" class="btn btn-primary w-full">Save Configuration</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Provider List -->
+            <div class="card bg-base-100 shadow-xl col-span-1 lg:col-span-2">
+                <div class="card-body">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="card-title text-primary">Configured Providers</h2>
+                        <button type="button" onclick="fetchProviders()" class="btn btn-sm btn-outline">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-4 h-4 mr-1" role="img" aria-label="Refresh icon">
+                                <title>Refresh</title>
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra w-full">
+                            <thead>
+                                <tr>
+                                    <th>Provider</th>
+                                    <th>Client ID</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="providerTableBody">
+                                <!-- Loaded dynamically -->
+                                <tr>
+                                    <td colspan="3" class="text-center italic opacity-50">Enter API Key to load
+                                        providers...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast toast-end" id="notificationToast" style="display: none;">
+        <div class="alert alert-success">
+            <span id="notificationMessage">Message sent successfully.</span>
+        </div>
+    </div>
+
+    <script>
+        const apiKeyInput = document.getElementById('apiKey');
+        const configForm = document.getElementById('configForm');
+        const providerTableBody = document.getElementById('providerTableBody');
+
+        let providerData = {};
+
+        function showNotification(message, type = 'success') {
+            const toast = document.getElementById('notificationToast');
+            const alert = toast.querySelector('.alert');
+            const msgSpan = document.getElementById('notificationMessage');
+
+            alert.className = `alert alert-${type}`;
+            msgSpan.textContent = message;
+            toast.style.display = 'block';
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        async function fetchProviders() {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/config', {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                });
+                if (!response.ok) throw new Error(await response.text());
+                const providers = await response.json();
+                providerData = providers;
+
+                providerTableBody.innerHTML = '';
+
+                const entries = Object.entries(providers);
+                if (entries.length === 0) {
+                    providerTableBody.innerHTML = '<tr><td colspan="3" class="text-center">No providers configured yet.</td></tr>';
+                    return;
+                }
+
+                for (const [name, config] of entries) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                                <td class="font-bold">${name}</td>
+                                <td><code class="text-xs bg-base-200 p-1 rounded">${config.clientId}</code></td>
+                                <td>
+                                    <div class="flex gap-2">
+                                        <a href="/auth/${name}/login" target="_blank" class="btn btn-xs btn-accent">Connect</a>
+                                        <button type="button" onclick="editProvider('${name}')" class="btn btn-xs btn-outline">Edit</button>
+                                    </div>
+                                </td>
+                            `;
+                    providerTableBody.appendChild(row);
+                };
+            } catch (error) {
+                console.error('Error fetching providers:', error);
+                providerTableBody.innerHTML = `<tr><td colspan="3" class="text-center text-error">Failed to load: ${error.message}</td></tr>`;
+            }
+        }
+
+        function _editProvider(name) {
+            const config = providerData[name];
+            if (!config) return;
+
+            document.getElementById('providerName').value = name;
+            document.getElementById('clientId').value = config.clientId;
+            document.getElementById('clientSecret').value = config.clientSecret;
+            document.getElementById('authUrl').value = config.authUrl;
+            document.getElementById('tokenUrl').value = config.tokenUrl;
+            document.getElementById('redirectUri').value = config.redirectUri;
+            document.getElementById('scope').value = config.scope;
+
+            // Scroll to form
+            document.getElementById('configForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        configForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                showNotification('Please enter your API Key in the top right corner', 'error');
+                return;
+            }
+
+            const name = document.getElementById('providerName').value.trim();
+            const config = {
+                clientId: document.getElementById('clientId').value.trim(),
+                clientSecret: document.getElementById('clientSecret').value.trim(),
+                authUrl: document.getElementById('authUrl').value.trim(),
+                tokenUrl: document.getElementById('tokenUrl').value.trim(),
+                redirectUri: document.getElementById('redirectUri').value.trim(),
+                scope: document.getElementById('scope').value.trim(),
+            };
+
+            try {
+                const response = await fetch(`/api/config/${name}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Failed to save config');
+                }
+
+                showNotification('Configuration saved successfully!');
+                fetchProviders();
+                configForm.reset();
+            } catch (error) {
+                console.error('Error saving config:', error);
+                showNotification(error.message, 'error');
+            }
+        });
+
+        // Initialize table if API Key is present in local storage
+        const savedApiKey = localStorage.getItem('auth_server_api_key');
+        if (savedApiKey) {
+            apiKeyInput.value = savedApiKey;
+            fetchProviders();
+        }
+
+        apiKeyInput.addEventListener('input', () => {
+            localStorage.setItem('auth_server_api_key', apiKeyInput.value);
+            // Debounce fetch
+            clearTimeout(window.fetchTimeout);
+            window.fetchTimeout = setTimeout(fetchProviders, 500);
+        });
+    </script>
+</body>
+
+</html>
