@@ -26,7 +26,6 @@
 
     <div class="container mx-auto p-4 md:p-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Configuration Form -->
             <div class="card bg-base-100 shadow-xl col-span-1">
                 <div class="card-body">
                     <h2 class="card-title text-primary">Add/Update Provider</h2>
@@ -70,7 +69,6 @@
                 </div>
             </div>
 
-            <!-- Provider List -->
             <div class="card bg-base-100 shadow-xl col-span-1 lg:col-span-2">
                 <div class="card-body">
                     <div class="flex justify-between items-center mb-6">
@@ -95,7 +93,6 @@
                                 </tr>
                             </thead>
                             <tbody id="providerTableBody">
-                                <!-- Loaded dynamically -->
                                 <tr>
                                     <td colspan="3" class="text-center italic opacity-50">Enter API Key to load
                                         providers...</td>
@@ -191,7 +188,6 @@
             document.getElementById('redirectUri').value = config.redirectUri;
             document.getElementById('scope').value = config.scope;
 
-            // Scroll to form
             document.getElementById('configForm').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -237,7 +233,6 @@
             }
         });
 
-        // Initialize table if API Key is present in local storage
         const savedApiKey = localStorage.getItem('auth_server_api_key');
         if (savedApiKey) {
             apiKeyInput.value = savedApiKey;
@@ -246,7 +241,6 @@
 
         apiKeyInput.addEventListener('input', () => {
             localStorage.setItem('auth_server_api_key', apiKeyInput.value);
-            // Debounce fetch
             clearTimeout(window.fetchTimeout);
             window.fetchTimeout = setTimeout(fetchProviders, 500);
         });
