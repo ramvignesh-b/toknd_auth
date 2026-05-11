@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="caramellatte">
+<html lang="en" data-theme="abyss">
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,39 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-sans: "DM Sans", sans-serif;
+            --font-mono: "DM Mono", monospace;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            letter-spacing: -0.01em;
+        }
+
+        .font-mono,
+        .input-mono,
+        #apiKey,
+        [type="password"],
+        [id^="token-"] {
+            font-family: var(--font-mono);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.05em;
+        }
+
+        /* UI elements that benefit from Geist Sans */
+        .btn,
+        .card-title,
+        .navbar a,
+        .label-text,
+        .tooltip {
+            font-family: var(--font-sans);
+        }
+    </style>
 </head>
 
 <body class="bg-base-200/50 min-h-screen font-sans antialiased text-base-content">
@@ -16,10 +49,11 @@
         <div class="flex-1">
             <div class="flex items-center gap-2">
                 <div
-                    class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-bold text-lg">
+                    class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-semibold text-lg">
                     <i class="ph-duotone ph-fingerprint"></i>
                 </div>
-                <a class="text-xl font-bold tracking-tight">toknd <span class="text-xs font-normal opacity-50 ml-1">auth
+                <a class="text-xl font-semibold tracking-tight">toknd <span
+                        class="text-xs font-normal opacity-50 ml-1">auth
                         broker</span></a>
             </div>
         </div>
@@ -31,7 +65,7 @@
                 </div>
                 <div class="relative flex-1">
                     <input type="password" id="apiKey" placeholder="API_KEY"
-                        class="input join-item input-sm bg-transparent border-none focus:outline-none focus:ring-0 w-48 lg:w-64 text-xs pr-10" />
+                        class="input join-item input-sm bg-transparent border-none focus:outline-none focus:ring-0 w-48 lg:w-64 text-xs pr-10 font-mono" />
                     <button type="button" onclick="window.toggleToken('apiKey')"
                         class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square">
                         <i class="ph-duotone ph-eye text-base opacity-50" id="eye-apiKey"></i>
@@ -52,13 +86,13 @@
                 <div class="card-body p-6">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="w-2 h-6 bg-primary rounded-full"></div>
-                        <h2 class="card-title text-xl font-bold">Configure Provider</h2>
+                        <h2 class="card-title text-xl font-semibold">Configure Provider</h2>
                     </div>
 
                     <form id="configForm" class="space-y-4">
                         <div class="form-control">
                             <label class="label py-1">
-                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                <span class="label-text flex items-center gap-2">
                                     Provider ID
                                     <div class="tooltip tooltip-top"
                                         data-tip="Internal name for this service. This will define your login URL (e.g. /auth/trakt/login).">
@@ -70,15 +104,15 @@
                                 class="input input-bordered w-full focus:input-primary" />
                         </div>
 
-                        <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-[10px]">Credentials
+                        <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-xs">Credentials
                         </div>
 
                         <div class="form-control">
                             <label class="label py-1">
-                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                <span class="label-text flex items-center gap-2">
                                     Client ID
                                     <div class="tooltip tooltip-top"
-                                        data-tip="Found in the 'API' or 'Developer' section of the provider. Sometimes called 'App ID' or 'Consumer Key'.">
+                                        data-tip="Found in the &quot;API&quot; or &quot;Developer&quot; section of the provider. Sometimes called &quot;App ID&quot; or &quot;Consumer Key&quot;.">
                                         <i class="ph ph-info opacity-50 cursor-help"></i>
                                     </div>
                                 </span>
@@ -88,7 +122,7 @@
                         </div>
                         <div class="form-control">
                             <label class="label py-1">
-                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                <span class="label-text flex items-center gap-2">
                                     Client Secret
                                     <div class="tooltip tooltip-top"
                                         data-tip="Found next to the Client ID. This is your private key—never share it or put it in client-side code.">
@@ -106,15 +140,15 @@
                             </div>
                         </div>
 
-                        <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-[10px]">Endpoints
+                        <div class="divider text-xs opacity-50 my-2 uppercase tracking-widest text-xs">Endpoints
                         </div>
 
                         <div class="form-control">
                             <label class="label py-1">
-                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                <span class="label-text flex items-center gap-2">
                                     Auth URL
                                     <div class="tooltip tooltip-top"
-                                        data-tip="The page where users click 'Authorize'. Usually found in OAuth2 docs under 'Endpoints' or 'Authorize'.">
+                                        data-tip="The page where users click &quot;Authorize&quot;. Usually found in OAuth2 docs under &quot;Endpoints&quot; or &quot;Authorize&quot;.">
                                         <i class="ph ph-info opacity-50 cursor-help"></i>
                                     </div>
                                 </span>
@@ -124,10 +158,10 @@
                         </div>
                         <div class="form-control">
                             <label class="label py-1">
-                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                <span class="label-text flex items-center gap-2">
                                     Token URL
                                     <div class="tooltip tooltip-top"
-                                        data-tip="The background API used to trade the code for a token. Usually ends in '/token' or '/access_token'.">
+                                        data-tip="The background API used to trade the code for a token. Usually ends in &quot;/token&quot; or &quot;/access_token&quot;.">
                                         <i class="ph ph-info opacity-50 cursor-help"></i>
                                     </div>
                                 </span>
@@ -137,10 +171,10 @@
                         </div>
                         <div class="form-control">
                             <label class="label py-1">
-                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                <span class="label-text flex items-center gap-2">
                                     Redirect URI
                                     <div class="tooltip tooltip-top"
-                                        data-tip="Copy this URL and paste it into the 'Redirect URI' or 'Callback URL' field in your OAuth provider's settings.">
+                                        data-tip="Copy this URL and paste it into the &quot;Redirect URI&quot; or &quot;Callback URL&quot; field in your OAuth provider's settings.">
                                         <i class="ph ph-info opacity-50 cursor-help"></i>
                                     </div>
                                 </span>
@@ -150,17 +184,17 @@
                                     class="input input-bordered w-full pr-12 focus:outline-none cursor-default opacity-80" />
                                 <button type="button" onclick="copyRedirectUri()"
                                     class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors">
-                                    <i class="ph ph-copy text-sm"></i>
+                                    <i class="ph ph-copy text-xs"></i>
                                 </button>
                             </div>
                             <label class="label py-0.5">
-                                <span class="label-text-alt opacity-40 italic text-[10px]">Must match provider's
+                                <span class="label-text-alt opacity-40 italic text-xs">Must match provider&apos;s
                                     callback URL</span>
                             </label>
                         </div>
                         <div class="form-control">
                             <label class="label py-1">
-                                <span class="label-text font-semibold opacity-70 flex items-center gap-2">
+                                <span class="label-text flex items-center gap-2">
                                     Scope
                                     <div class="tooltip tooltip-top"
                                         data-tip="Determines what data you're allowed to access. Multiple scopes are usually space-separated.">
@@ -186,8 +220,8 @@
                 <div class="card-body p-0">
                     <div class="p-6 pb-4 flex justify-between items-center bg-base-100">
                         <div class="flex items-center gap-2">
-                            <div class="w-2 h-6 bg-secondary rounded-full"></div>
-                            <h2 class="card-title text-xl font-bold">Provider Registry</h2>
+                            <div class="w-2 h-6 bg-primary rounded-full"></div>
+                            <h2 class="card-title text-xl font-semibold">Provider Registry</h2>
                         </div>
                         <button type="button" onclick="fetchProviders()" class="btn btn-sm btn-ghost border-base-300">
                             <i id="refreshIcon" class="ph ph-arrows-clockwise mr-1"></i>
@@ -200,7 +234,7 @@
                             class="absolute inset-0 bg-base-100/50 backdrop-blur-[2px] z-10 flex items-center justify-center hidden transition-all duration-300">
                             <div class="flex flex-col items-center gap-4">
                                 <span class="loading loading-spinner loading-lg text-primary"></span>
-                                <span class="text-xs font-bold uppercase tracking-widest opacity-40">Syncing
+                                <span class="text-xs font-semibold uppercase tracking-widest opacity-40">Syncing
                                     Registry...</span>
                             </div>
                         </div>
@@ -338,17 +372,17 @@
                 card.innerHTML = `
                     <div class="card-body p-5">
                         <div class="flex flex-col mb-4">
-                            <span class="text-lg font-black tracking-tight text-base-content/90 uppercase">${name}</span>
-                            <span class="text-[10px] opacity-40 truncate" title="${config.clientId}">${config.clientId}</span>
+                            <span class="text-lg font-black text-base-content/90 uppercase">${name}</span>
+                            <span class="text-xs opacity-40 truncate font-mono" title="${config.clientId}">${config.clientId}</span>
                         </div>
 
                         <div class="space-y-4">
                             <div>
-                                <label class="text-[10px] uppercase font-bold opacity-30 block mb-1">Access Token</label>
+                                <label class="text-xs uppercase font-semibold opacity-30 block mb-1">Access Token</label>
                                 ${renderTokenField(name, 'access', status.accessToken)}
                             </div>
                             <div>
-                                <label class="text-[10px] uppercase font-bold opacity-30 block mb-1">Refresh Token</label>
+                                <label class="text-xs uppercase font-semibold opacity-30 block mb-1">Refresh Token</label>
                                 ${renderTokenField(name, 'refresh', status.refreshToken)}
                             </div>
                         </div>
@@ -356,7 +390,7 @@
                         <div class="divider my-3 opacity-10"></div>
 
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-[10px] font-bold opacity-30 uppercase">Last Updated</span>
+                            <span class="text-xs font-semibold opacity-30 uppercase">Last Updated</span>
                             <span class="text-xs font-medium opacity-60">${formatTimeAgo(status.lastUpdated)}</span>
                         </div>
 
@@ -376,13 +410,13 @@
 
         function renderTokenField(provider, type, value) {
             if (!value) {
-                return `<div class="h-8 flex items-center px-3 bg-base-300/30 rounded text-[10px] italic opacity-40">Not Authenticated</div>`;
+                return `<div class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40">Not Authenticated</div>`;
             }
             const id = `token-${provider}-${type}`;
             return `
                 <div class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3 group/token transition-all focus-within:border-primary/50">
                     <input type="password" id="${id}" value="${value}" readonly
-                        class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-[10px] flex-1 min-w-0" />
+                        class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono" />
                     <div class="flex gap-1">
                         <button onclick="window.toggleToken('${id}')" class="btn btn-ghost btn-xs btn-square">
                             <i class="ph-duotone ph-eye text-base opacity-50" id="eye-${id}"></i>
@@ -400,7 +434,7 @@
             const eye = document.getElementById(`eye-${id}`);
             if (input.type === 'password') {
                 input.type = 'text';
-                eye.className = 'ph-duotone ph-eye-slash text-base opacity-70';
+                eye.className = 'ph-duotone ph-eye-slash text-base';
             } else {
                 input.type = 'password';
                 eye.className = 'ph-duotone ph-eye text-base opacity-50';
