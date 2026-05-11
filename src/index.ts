@@ -17,8 +17,8 @@ app.doc("/doc", {
 	openapi: "3.0.0",
 	info: {
 		version: "1.0.0",
-		title: "toknd — Auth Broker API",
-		description: "Centralized token management and OAuth2 broker service.",
+		title: "toknd — Auth Broker API v1",
+		description: "Centralized token management and OAuth2 broker service (v1).",
 	},
 	tags: [
 		{ name: "Tokens", description: "Standard API for retrieving and refreshing provider tokens." },
@@ -52,9 +52,9 @@ app.use("*", prettyJSON());
 app.get("/", (c) => c.redirect("/app"));
 
 app.get("/app/dashboard.js", serveStatic({ path: "./src/views/dashboard.js" }));
-app.route("/auth", authRoutes);
-app.route("/api/config", configRoutes);
-app.route("/api", apiRoutes);
+app.route("/v1/auth", authRoutes);
+app.route("/api/v1/config", configRoutes);
+app.route("/api/v1", apiRoutes);
 app.route("/app", dashboardRoutes);
 
 app.notFound((c) => {

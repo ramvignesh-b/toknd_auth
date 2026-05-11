@@ -66,10 +66,13 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 					<a
 						href="/docs"
 						target="_blank"
-						class="btn btn-ghost btn-sm text-base-content/60 hover:text-primary gap-2 px-3" rel="noopener"
+						class="btn btn-ghost btn-sm text-base-content/60 hover:text-primary gap-2 px-3"
+						rel="noopener"
 					>
 						<i class="ph-duotone ph-book-open text-lg"></i>
-						<span class="font-bold uppercase tracking-widest text-xs">API Reference</span>
+						<span class="font-bold uppercase tracking-widest text-xs">
+							API Reference <sup class="text-[8px] opacity-50 ml-0.5">v1.0.0</sup>
+						</span>
 					</a>
 				</nav>
 			</div>
@@ -439,7 +442,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 												<div class="grid grid-cols-2 gap-2">
 													<button
 														type="button"
-														x-on:click="window.open('/auth/' + provider.name + '/login', '_blank')"
+														x-on:click="window.open('/v1/auth/' + provider.name + '/login', '_blank')"
 														class="btn btn-primary btn-sm"
 													>
 														<i class="ph-bold ph-link"></i> Connect

@@ -76,8 +76,8 @@ document.addEventListener("alpine:init", () => {
 			this.loading = true;
 			try {
 				const [configRes, statusRes] = await Promise.all([
-					fetch("/api/config"),
-					fetch("/api/status"),
+					fetch("/api/v1/config"),
+					fetch("/api/v1/status"),
 				]);
 
 				if (configRes.status === 401 || statusRes.status === 401) {
@@ -112,7 +112,7 @@ document.addEventListener("alpine:init", () => {
 		async saveConfig() {
 			this.loading = true;
 			try {
-				const res = await fetch(`/api/config/${this.form.providerName}`, {
+				const res = await fetch(`/api/v1/config/${this.form.providerName}`, {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(this.form),
@@ -146,7 +146,7 @@ document.addEventListener("alpine:init", () => {
 		async forceRefresh(name) {
 			this.loading = true;
 			try {
-				const res = await fetch(`/api/refresh/${name}`, {
+				const res = await fetch(`/api/v1/refresh/${name}`, {
 					method: "POST",
 				});
 
@@ -175,7 +175,7 @@ document.addEventListener("alpine:init", () => {
 
 			this.loading = true;
 			try {
-				const res = await fetch(`/api/config/${name}`, {
+				const res = await fetch(`/api/v1/config/${name}`, {
 					method: "DELETE",
 				});
 
@@ -207,7 +207,7 @@ document.addEventListener("alpine:init", () => {
 		},
 
 		getRedirectUri() {
-			return `${window.location.origin}/auth/${this.form.providerName || "{provider}"}/callback`;
+			return `${window.location.origin}/v1/auth/${this.form.providerName || "{provider}"}/callback`;
 		},
 
 		copyToClipboard(text) {
