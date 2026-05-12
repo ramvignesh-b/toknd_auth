@@ -4,6 +4,7 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { html } from "hono/html";
 import type { Child } from "hono/jsx";
 import { config } from "../config";
+import { API_PREFIX, API_VERSION, APP_VERSION, AUTH_PREFIX, DOCS_PREFIX } from "../constants";
 
 const dashboardRoutes = new Hono({ strict: false });
 
@@ -39,7 +40,14 @@ export const Layout = (props: { title: string; children: Child; isUnlocked?: boo
 			</head>
 			<body
 				class="bg-base-200/50 min-h-screen font-['DM_Sans',sans-serif] antialiased text-base-content tracking-tight"
-				x-data={`dashboard({ initialIsUnlocked: ${props.isUnlocked || false} })`}
+				x-data={`dashboard({ 
+					initialIsUnlocked: ${props.isUnlocked || false},
+					apiVersion: '${API_VERSION}',
+					appVersion: '${APP_VERSION}',
+					apiPrefix: '${API_PREFIX}',
+					authPrefix: '${AUTH_PREFIX}',
+					docsPrefix: '${DOCS_PREFIX}'
+				})`}
 			>
 				{props.children}
 				<script src="/app/dashboard.js"></script>
@@ -52,7 +60,7 @@ export const Layout = (props: { title: string; children: Child; isUnlocked?: boo
 export const Dashboard = (props: { isUnlocked: boolean }) => (
 	<Layout title="toknd — Auth Broker Dashboard" isUnlocked={props.isUnlocked}>
 		<div class="navbar bg-base-100 shadow-sm px-4 md:px-8 border-b border-base-300">
-			<div class="flex-1">
+			<div class="flex-1 flex items-center gap-6">
 				<div class="flex items-center gap-2">
 					<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-semibold text-lg">
 						<i class="ph-duotone ph-fingerprint"></i>
@@ -61,49 +69,75 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 						toknd <span class="text-xs font-normal opacity-50 ml-1">auth broker</span>
 					</div>
 				</div>
+
+				<nav class="hidden md:flex items-center gap-1">
+					<a
+						href={DOCS_PREFIX}
+						target="_blank"
+						class="btn btn-ghost btn-sm text-base-content/60 hover:text-primary gap-2 px-3"
+						rel="noopener"
+					>
+						<i class="ph-duotone ph-book-open text-lg"></i>
+						<span class="font-bold uppercase tracking-widest text-xs">
+							API Reference{" "}
+							<sup class="text-[8px] opacity-50 ml-0.5">
+								{API_VERSION}.{APP_VERSION}
+							</sup>
+						</span>
+					</a>
+				</nav>
 			</div>
 			<div class="flex-none hidden sm:flex">
-				<div class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
-					<div class="join-item flex items-center px-4 bg-base-200">
-						<i class="ph-duotone ph-key text-secondary text-lg"></i>
-					</div>
-					<div class="relative flex-1" x-data="{ show: false }">
-						<input
-							x-bind:type="show ? 'text' : 'password'"
-							id="apiKey"
-							name="apiKey"
-							x-model="apiKey"
-							aria-label="Master API Key"
-							placeholder="API_KEY"
-							class="input join-item input-sm bg-transparent border-none focus:outline-none w-48 lg:w-64 text-xs pr-10 font-mono"
-						/>
+				<template x-if="!isUnlocked">
+					<div class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
+						<div class="join-item flex items-center px-4 bg-base-200">
+							<i class="ph-duotone ph-key text-secondary text-lg"></i>
+						</div>
+						<div class="relative flex-1" x-data="{ show: false }">
+							<input
+								x-bind:type="show ? 'text' : 'password'"
+								id="apiKey"
+								name="apiKey"
+								x-model="apiKey"
+								aria-label="Master API Key"
+								placeholder="API_KEY"
+								class="input join-item input-sm bg-transparent border-none focus:outline-none w-48 lg:w-64 text-xs pr-10 font-mono"
+							/>
+							<button
+								type="button"
+								x-on:click="show = !show"
+								class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
+							>
+								<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
+							</button>
+						</div>
 						<button
-							type="button"
-							x-on:click="show = !show"
-							class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
+							x-on:click="unlock()"
+							type="submit"
+							class="btn btn-primary btn-sm join-item px-6"
+							x-bind:disabled="loading"
 						>
-							<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
+							<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
+							<span class="loading loading-spinner loading-xs" x-show="loading"></span>
+							<span
+								class="ml-1 hidden md:inline"
+								x-text="loading ? 'Unlocking...' : 'Unlock'"
+							></span>
 						</button>
 					</div>
+				</template>
+
+				<template x-if="isUnlocked">
 					<button
-						x-on:click="unlock()"
-						type="submit"
-						class="btn btn-primary btn-sm join-item px-6"
-						x-bind:disabled="loading"
-					>
-						<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
-						<span class="loading loading-spinner loading-xs" x-show="loading"></span>
-						<span class="ml-1 hidden md:inline" x-text="loading ? 'Unlocking...' : 'Unlock'"></span>
-					</button>
-					<button
-						x-show="isUnlocked"
 						x-on:click="logout()"
 						type="button"
-						class="btn btn-ghost btn-sm join-item text-error hover:bg-error/10"
+						class="btn btn-ghost btn-sm text-error hover:bg-error/10 gap-2 px-4"
+						x-bind:disabled="loading"
 					>
 						<i class="ph-bold ph-power text-lg"></i>
+						<span class="font-bold uppercase tracking-wider text-xs">Logout</span>
 					</button>
-				</div>
+				</template>
 			</div>
 		</div>
 
@@ -308,10 +342,20 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 									<div class="card bg-base-200/50 border border-base-300 shadow-sm hover:shadow-md transition-all group">
 										<div class="card-body p-5">
 											<div class="flex flex-col mb-4">
-												<span
-													x-text="provider.name"
-													class="text-lg font-black text-base-content/90 uppercase"
-												></span>
+												<div class="flex justify-between items-start">
+													<span
+														x-text="provider.name"
+														class="text-lg font-black text-base-content/90 uppercase"
+													></span>
+													<button
+														type="button"
+														x-on:click="deleteProvider(provider.name)"
+														class="btn btn-error btn-xs mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300"
+														title="Delete Provider"
+													>
+														<i class="ph-bold ph-trash text-lg"></i>
+													</button>
+												</div>
 												<span
 													x-text="provider.config.clientId"
 													x-bind:title="provider.config.clientId"
@@ -412,7 +456,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 												<div class="grid grid-cols-2 gap-2">
 													<button
 														type="button"
-														x-on:click="window.open('/auth/' + provider.name + '/login', '_blank')"
+														x-on:click={`window.open('${AUTH_PREFIX}/' + provider.name + '/login', '_blank')`}
 														class="btn btn-primary btn-sm"
 													>
 														<i class="ph-bold ph-link"></i> Connect

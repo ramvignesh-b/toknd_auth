@@ -1,16 +1,10 @@
 // @ts-nocheck
-import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
+import { describe, expect, it, spyOn } from "bun:test";
+import { API_PREFIX } from "../../src/constants";
 import { redis } from "../../src/core/RedisClient";
 import { app } from "../../src/index";
 
 describe("API Integration", () => {
-	afterEach(() => {
-		mock.restore();
-		redis.get.mockImplementation(() => Promise.resolve(null));
-		redis.set.mockImplementation(() => Promise.resolve());
-		redis.keys.mockImplementation(() => Promise.resolve([]));
-	});
-
 	const mockTraktConfig = JSON.stringify({
 		clientId: "trakt-client-id",
 		clientSecret: "trakt-client-secret",
@@ -20,7 +14,7 @@ describe("API Integration", () => {
 	});
 
 	it("should return 401 if API Key is missing", async () => {
-		const res = await app.request("/api/status");
+		const res = await app.request(`${API_PREFIX}/status`);
 
 		expect(res.status).toBe(401);
 		const body = await res.json();
@@ -55,7 +49,7 @@ describe("API Integration", () => {
 			return Promise.resolve(null);
 		});
 
-		const res = await app.request("/api/status", {
+		const res = await app.request(`${API_PREFIX}/status`, {
 			headers: {
 				Authorization: "Bearer test-api-key",
 			},
@@ -75,7 +69,7 @@ describe("API Integration", () => {
 			return Promise.resolve(null);
 		});
 
-		const res = await app.request("/api/status", {
+		const res = await app.request(`${API_PREFIX}/status`, {
 			headers: {
 				Cookie: "toknd_api_key=test-api-key",
 			},
@@ -87,7 +81,7 @@ describe("API Integration", () => {
 	});
 
 	it("should return 404 for unknown provider token", async () => {
-		const res = await app.request("/api/token/unconfigured-provider", {
+		const res = await app.request(`${API_PREFIX}/token/unconfigured-provider`, {
 			headers: {
 				Authorization: "Bearer test-api-key",
 			},
@@ -103,7 +97,7 @@ describe("API Integration", () => {
 			return Promise.resolve(null);
 		});
 
-		const res = await app.request("/api/token/trakt", {
+		const res = await app.request(`${API_PREFIX}/token/trakt`, {
 			headers: {
 				Authorization: "Bearer test-api-key",
 			},
@@ -120,7 +114,7 @@ describe("API Integration", () => {
 			return Promise.resolve(null);
 		});
 
-		const res = await app.request("/api/token/trakt", {
+		const res = await app.request(`${API_PREFIX}/token/trakt`, {
 			headers: {
 				Authorization: "Bearer test-api-key",
 			},
@@ -150,7 +144,7 @@ describe("API Integration", () => {
 			}),
 		);
 
-		const res = await app.request("/api/refresh/trakt", {
+		const res = await app.request(`${API_PREFIX}/refresh/trakt`, {
 			method: "POST",
 			headers: {
 				Authorization: "Bearer test-api-key",

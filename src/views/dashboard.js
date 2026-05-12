@@ -10,194 +10,230 @@ document.addEventListener("alpine:init", () => {
 		return date.toLocaleDateString();
 	};
 
-	window.Alpine.data("dashboard", ({ initialIsUnlocked }) => ({
-		apiKey: "",
-		isUnlocked: initialIsUnlocked,
-		loading: false,
-		providers: [],
-		form: {
-			providerName: "",
-			clientId: "",
-			clientSecret: "",
-			authUrl: "",
-			tokenUrl: "",
-			scope: "public",
-		},
-		notification: {
-			show: false,
-			message: "",
-			type: "success",
-		},
+	window.Alpine.data(
+		"dashboard",
+		({ initialIsUnlocked, apiPrefix, authPrefix, docsPrefix, apiVersion, appVersion }) => ({
+			apiKey: "",
+			isUnlocked: initialIsUnlocked,
+			apiPrefix,
+			authPrefix,
+			docsPrefix,
+			apiVersion,
+			appVersion,
+			loading: false,
+			providers: [],
+			form: {
+				providerName: "",
+				clientId: "",
+				clientSecret: "",
+				authUrl: "",
+				tokenUrl: "",
+				scope: "public",
+			},
+			notification: {
+				show: false,
+				message: "",
+				type: "success",
+			},
 
-		init() {
-			if (this.isUnlocked) {
-				this.fetchProviders();
-			}
-		},
+			init() {
+				if (this.isUnlocked) {
+					this.fetchProviders();
+				}
+			},
 
-		async unlock() {
-			if (!this.apiKey) return;
-			this.loading = true;
-			try {
-				const res = await fetch("/app/unlock", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ apiKey: this.apiKey }),
-				});
+			async unlock() {
+				if (!this.apiKey) return;
+				this.loading = true;
+				try {
+					const res = await fetch("/app/unlock", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ apiKey: this.apiKey }),
+					});
 
-				if (!res.ok) throw new Error("Invalid API Key");
+					if (!res.ok) throw new Error("Invalid API Key");
 
-				this.isUnlocked = true;
-				await this.fetchProviders();
-				this.apiKey = ""; // Clear after success
-			} catch (err) {
-				this.showNotification(err.message, "error");
-				this.isUnlocked = false;
-			} finally {
-				this.loading = false;
-			}
-		},
+					this.isUnlocked = true;
+					await this.fetchProviders();
+					this.apiKey = ""; // Clear after success
+				} catch (err) {
+					this.showNotification(err.message, "error");
+					this.isUnlocked = false;
+				} finally {
+					this.loading = false;
+				}
+			},
 
-		async logout() {
-			this.loading = true;
-			try {
-				await fetch("/app/logout", { method: "POST" });
+			async logout() {
+				this.loading = true;
+				try {
+					await fetch("/app/logout", { method: "POST" });
+					this.isUnlocked = false;
+					this.providers = [];
+					this.showNotification("Logged out successfully");
+				} catch (err) {
+					this.showNotification(`Logout failed: ${err.message}`, "error");
+				} finally {
+					this.loading = false;
+				}
+			},
+
+			async fetchProviders() {
+				this.loading = true;
+				try {
+					const [configRes, statusRes] = await Promise.all([
+						fetch(`${this.apiPrefix}/config`),
+						fetch(`${this.apiPrefix}/status`),
+					]);
+
+					if (configRes.status === 401 || statusRes.status === 401) {
+						return this.handleSessionExpired();
+					}
+
+					if (!configRes.ok || !statusRes.ok) throw new Error("Failed to fetch data");
+
+					const [config, status] = await Promise.all([configRes.json(), statusRes.json()]);
+					this.providers = this.mapProviders(config, status);
+				} catch (err) {
+					this.showNotification(err.message, "error");
+				} finally {
+					this.loading = false;
+				}
+			},
+
+			mapProviders(config, status) {
+				return Object.entries(config).map(([name, cfg]) => ({
+					name,
+					config: cfg,
+					status: status[name] || { accessToken: null, refreshToken: null, lastUpdated: null },
+				}));
+			},
+
+			handleSessionExpired() {
 				this.isUnlocked = false;
 				this.providers = [];
-				this.showNotification("Logged out successfully");
-			} catch (err) {
-				this.showNotification(`Logout failed: ${err.message}`, "error");
-			} finally {
-				this.loading = false;
-			}
-		},
+				this.showNotification("Session expired", "error");
+			},
 
-		async fetchProviders() {
-			this.loading = true;
-			try {
-				const [configRes, statusRes] = await Promise.all([
-					fetch("/api/config"),
-					fetch("/api/status"),
-				]);
+			async saveConfig() {
+				this.loading = true;
+				try {
+					const res = await fetch(`${this.apiPrefix}/config/${this.form.providerName}`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(this.form),
+					});
 
-				if (configRes.status === 401 || statusRes.status === 401) {
-					return this.handleSessionExpired();
+					if (res.status === 401) {
+						this.isUnlocked = false;
+						throw new Error("Session expired");
+					}
+
+					if (!res.ok) throw new Error("Failed to save");
+
+					this.showNotification("Saved successfully");
+					await this.fetchProviders();
+
+					this.form = {
+						providerName: "",
+						clientId: "",
+						clientSecret: "",
+						authUrl: "",
+						tokenUrl: "",
+						scope: "public",
+					};
+				} catch (err) {
+					this.showNotification(err.message, "error");
+				} finally {
+					this.loading = false;
 				}
+			},
 
-				if (!configRes.ok || !statusRes.ok) throw new Error("Failed to fetch data");
+			async forceRefresh(name) {
+				this.loading = true;
+				try {
+					const res = await fetch(`${this.apiPrefix}/refresh/${name}`, {
+						method: "POST",
+					});
 
-				const [config, status] = await Promise.all([configRes.json(), statusRes.json()]);
-				this.providers = this.mapProviders(config, status);
-			} catch (err) {
-				this.showNotification(err.message, "error");
-			} finally {
-				this.loading = false;
-			}
-		},
+					if (res.status === 401) {
+						return this.handleSessionExpired();
+					}
 
-		mapProviders(config, status) {
-			return Object.entries(config).map(([name, cfg]) => ({
-				name,
-				config: cfg,
-				status: status[name] || { accessToken: null, refreshToken: null, lastUpdated: null },
-			}));
-		},
+					if (!res.ok) throw new Error("Refresh failed");
 
-		handleSessionExpired() {
-			this.isUnlocked = false;
-			this.providers = [];
-			this.showNotification("Session expired", "error");
-		},
-
-		async saveConfig() {
-			this.loading = true;
-			try {
-				const res = await fetch(`/api/config/${this.form.providerName}`, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(this.form),
-				});
-
-				if (res.status === 401) {
-					this.isUnlocked = false;
-					throw new Error("Session expired");
+					this.showNotification(`Refreshed ${name}`);
+					await this.fetchProviders();
+				} catch (err) {
+					this.showNotification(err.message, "error");
+				} finally {
+					this.loading = false;
 				}
+			},
 
-				if (!res.ok) throw new Error("Failed to save");
+			async deleteProvider(name) {
+				if (
+					!confirm(
+						`Are you sure you want to delete ${name}? This will also remove all associated tokens.`,
+					)
+				)
+					return;
 
-				this.showNotification("Saved successfully");
-				await this.fetchProviders();
+				this.loading = true;
+				try {
+					const res = await fetch(`${this.apiPrefix}/config/${name}`, {
+						method: "DELETE",
+					});
 
+					if (res.status === 401) {
+						return this.handleSessionExpired();
+					}
+
+					if (!res.ok) throw new Error("Delete failed");
+
+					this.showNotification(`Deleted ${name}`);
+					await this.fetchProviders();
+				} catch (err) {
+					this.showNotification(err.message, "error");
+				} finally {
+					this.loading = false;
+				}
+			},
+
+			editProvider(provider) {
 				this.form = {
-					providerName: "",
-					clientId: "",
-					clientSecret: "",
-					authUrl: "",
-					tokenUrl: "",
-					scope: "public",
+					providerName: provider.name,
+					clientId: provider.config.clientId,
+					clientSecret: provider.config.clientSecret,
+					authUrl: provider.config.authUrl,
+					tokenUrl: provider.config.tokenUrl,
+					scope: provider.config.scope,
 				};
-			} catch (err) {
-				this.showNotification(err.message, "error");
-			} finally {
-				this.loading = false;
-			}
-		},
+				window.scrollTo({ top: 0, behavior: "smooth" });
+			},
 
-		async forceRefresh(name) {
-			this.loading = true;
-			try {
-				const res = await fetch(`/api/refresh/${name}`, {
-					method: "POST",
+			getRedirectUri() {
+				return `${window.location.origin}${this.authPrefix}/${this.form.providerName || "{provider}"}/callback`;
+			},
+
+			copyToClipboard(text) {
+				if (!text) return;
+				navigator.clipboard.writeText(text).then(() => {
+					this.showNotification("Copied");
 				});
+			},
 
-				if (res.status === 401) {
-					this.isUnlocked = false;
-					throw new Error("Session expired");
-				}
+			showNotification(message, type = "success") {
+				this.notification = { show: true, message, type };
+				setTimeout(() => {
+					this.notification.show = false;
+				}, 3000);
+			},
 
-				if (!res.ok) throw new Error("Refresh failed");
-
-				this.showNotification(`Refreshed ${name}`);
-				await this.fetchProviders();
-			} catch (err) {
-				this.showNotification(err.message, "error");
-			} finally {
-				this.loading = false;
-			}
-		},
-
-		editProvider(provider) {
-			this.form = {
-				providerName: provider.name,
-				clientId: provider.config.clientId,
-				clientSecret: provider.config.clientSecret,
-				authUrl: provider.config.authUrl,
-				tokenUrl: provider.config.tokenUrl,
-				scope: provider.config.scope,
-			};
-			window.scrollTo({ top: 0, behavior: "smooth" });
-		},
-
-		getRedirectUri() {
-			return `${window.location.origin}/auth/${this.form.providerName || "{provider}"}/callback`;
-		},
-
-		copyToClipboard(text) {
-			if (!text) return;
-			navigator.clipboard.writeText(text).then(() => {
-				this.showNotification("Copied");
-			});
-		},
-
-		showNotification(message, type = "success") {
-			this.notification = { show: true, message, type };
-			setTimeout(() => {
-				this.notification.show = false;
-			}, 3000);
-		},
-
-		formatTime(timestamp) {
-			return formatTime(timestamp);
-		},
-	}));
+			formatTime(timestamp) {
+				return formatTime(timestamp);
+			},
+		}),
+	);
 });

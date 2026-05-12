@@ -4,7 +4,9 @@ import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "./config";
+import { API_PREFIX, AUTH_PREFIX, DOCS_PREFIX } from "./constants";
 import { redis } from "./core/RedisClient";
+import { openApiSpec, securityScheme } from "./openapi";
 import { apiRoutes } from "./routes/api";
 import { authRoutes } from "./routes/auth";
 import { configRoutes } from "./routes/config";
@@ -13,29 +15,19 @@ import { dashboardRoutes } from "./routes/dashboard";
 const app = new OpenAPIHono({ strict: false });
 
 // OpenAPI specs
-app.doc("/doc", {
-	openapi: "3.0.0",
-	info: {
-		version: "1.0.0",
-		title: "toknd — Auth Broker API",
-		description: "Centralized token management and OAuth2 broker service.",
-	},
-});
-
-app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", {
-	type: "http",
-	scheme: "bearer",
-});
+app.doc(`${DOCS_PREFIX}/openapi.json`, openApiSpec);
+app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", securityScheme);
 
 // Scalar API Reference
 app.get(
-	"/api",
+	DOCS_PREFIX,
 	Scalar({
 		theme: "solarized",
-		url: "/doc",
+		url: `${DOCS_PREFIX}/openapi.json`,
 	}),
 );
-app.get("/docs", (c) => c.redirect("/api"));
+app.get("/docs", (c) => c.redirect(DOCS_PREFIX));
+app.get("/api", (c) => c.redirect(DOCS_PREFIX));
 
 app.use("*", logger());
 app.use("*", prettyJSON());
@@ -43,9 +35,9 @@ app.use("*", prettyJSON());
 app.get("/", (c) => c.redirect("/app"));
 
 app.get("/app/dashboard.js", serveStatic({ path: "./src/views/dashboard.js" }));
-app.route("/auth", authRoutes);
-app.route("/api/config", configRoutes);
-app.route("/api", apiRoutes);
+app.route(AUTH_PREFIX, authRoutes);
+app.route(`${API_PREFIX}/config`, configRoutes);
+app.route(API_PREFIX, apiRoutes);
 app.route("/app", dashboardRoutes);
 
 app.notFound((c) => {

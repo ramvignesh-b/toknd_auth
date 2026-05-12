@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { describe, expect, it } from "bun:test";
+import { API_PREFIX } from "../../src/constants";
 import { redis } from "../../src/core/RedisClient";
 import { app } from "../../src/index";
 
@@ -26,7 +27,7 @@ describe("Dashboard & Common Integration", () => {
 			throw new Error("Redis Crash");
 		});
 
-		const res = await app.request("/api/status", {
+		const res = await app.request(`${API_PREFIX}/status`, {
 			headers: { Authorization: "Bearer test-api-key" },
 		});
 

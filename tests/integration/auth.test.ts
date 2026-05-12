@@ -1,14 +1,10 @@
 // @ts-nocheck
-import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
+import { describe, expect, it, spyOn } from "bun:test";
+import { AUTH_PREFIX } from "../../src/constants";
 import { redis } from "../../src/core/RedisClient";
 import { app } from "../../src/index";
 
 describe("Auth Integration", () => {
-	afterEach(() => {
-		mock.restore();
-		redis.get.mockImplementation(() => Promise.resolve(null));
-	});
-
 	const mockProviderConfig = JSON.stringify({
 		clientId: "trakt-client-id",
 		clientSecret: "trakt-client-secret",
@@ -23,7 +19,7 @@ describe("Auth Integration", () => {
 			return Promise.resolve(null);
 		});
 
-		const res = await app.request("/auth/trakt/login");
+		const res = await app.request(`${AUTH_PREFIX}/trakt/login`);
 
 		expect(res.status).toBe(302);
 		expect(res.headers.get("Location")).toContain("trakt.tv/oauth/authorize");
@@ -48,7 +44,7 @@ describe("Auth Integration", () => {
 			}),
 		);
 
-		const res = await app.request("/auth/callback?state=trakt&code=temporary-auth-code");
+		const res = await app.request(`${AUTH_PREFIX}/callback?state=trakt&code=temporary-auth-code`);
 
 		expect(res.status).toBe(302);
 		expect(res.headers.get("Location")).toBe("/app/success?provider=trakt");
@@ -57,13 +53,13 @@ describe("Auth Integration", () => {
 	});
 
 	it("should return 404 if provider not configured during login", async () => {
-		const res = await app.request("/auth/unknown-provider/login");
+		const res = await app.request(`${AUTH_PREFIX}/unknown-provider/login`);
 
 		expect(res.status).toBe(404);
 	});
 
 	it("should return 400 if callback is missing state or code", async () => {
-		const res = await app.request("/auth/callback?code=some-code");
+		const res = await app.request(`${AUTH_PREFIX}/callback?code=some-code`);
 
 		expect(res.status).toBe(400);
 	});

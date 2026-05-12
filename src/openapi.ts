@@ -1,0 +1,31 @@
+import { API_VERSION, APP_VERSION } from "./constants";
+
+export const openApiSpec = {
+	openapi: "3.0.0",
+	info: {
+		version: `${API_VERSION}.${APP_VERSION}`,
+		title: "toknd Auth Broker API",
+		description:
+			"A high-performance OAuth2 broker and token management service. Designed to centralize provider configurations and automate token lifecycle management across distributed systems.",
+	},
+	tags: [
+		{
+			name: "Tokens",
+			description: "Endpoint operations for accessing and force-refreshing active provider tokens.",
+		},
+		{
+			name: "Management",
+			description: "Administrative operations for provider lifecycle and configuration.",
+		},
+		{
+			name: "Auth (Internal)",
+			description: "System-level OAuth2 handshake and callback processing.",
+		},
+	],
+	security: [{ API_KEY: [] }],
+};
+
+export const securityScheme = {
+	type: "http",
+	scheme: "bearer",
+} as const;
