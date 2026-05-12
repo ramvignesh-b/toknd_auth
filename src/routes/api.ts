@@ -15,6 +15,10 @@ const StatusResponseSchema = z
 			accessToken: z.string().nullable(),
 			refreshToken: z.string().nullable(),
 			lastUpdated: z.string().nullable(),
+			expiresAt: z.string().nullable().openapi({
+				example: "2026-05-12T10:00:00.000Z",
+				description: "ISO timestamp of when the access token expires",
+			}),
 		}),
 	)
 	.openapi("StatusResponse");
@@ -32,6 +36,10 @@ const RefreshResponseSchema = z
 			accessToken: z.string().nullable(),
 			refreshToken: z.string().nullable(),
 			lastUpdated: z.string().nullable(),
+			expiresAt: z.string().nullable().openapi({
+				example: "2026-05-12T10:00:00.000Z",
+				description: "ISO timestamp of when the access token expires",
+			}),
 		}),
 	})
 	.openapi("RefreshResponse");
@@ -112,7 +120,8 @@ apiRoutes.openapi(statusRoute, async (c) => {
 		const accessToken = await redis.get(`provider:${provider}:access_token`);
 		const refreshToken = await redis.get(`provider:${provider}:refresh_token`);
 		const lastUpdated = await redis.get(`provider:${provider}:last_updated`);
-		status[provider] = { accessToken, refreshToken, lastUpdated };
+		const expiresAt = await redis.get(`provider:${provider}:expires_at`);
+		status[provider] = { accessToken, refreshToken, lastUpdated, expiresAt };
 	}
 
 	return c.json(status, 200);
@@ -153,11 +162,12 @@ apiRoutes.openapi(refreshRoute, async (c) => {
 	const accessToken = await redis.get(`provider:${providerName}:access_token`);
 	const refreshToken = await redis.get(`provider:${providerName}:refresh_token`);
 	const lastUpdated = await redis.get(`provider:${providerName}:last_updated`);
+	const expiresAt = await redis.get(`provider:${providerName}:expires_at`);
 
 	return c.json(
 		{
 			success: true,
-			status: { accessToken, refreshToken, lastUpdated },
+			status: { accessToken, refreshToken, lastUpdated, expiresAt },
 		},
 		200,
 	);

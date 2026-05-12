@@ -40,5 +40,9 @@ export class TokenManager {
 		);
 		await this.redis.set(`provider:${providerName}:refresh_token`, tokens.refreshToken);
 		await this.redis.set(`provider:${providerName}:last_updated`, new Date().toISOString());
+		await this.redis.set(
+			`provider:${providerName}:expires_at`,
+			new Date(Date.now() + tokens.expiresIn * 1000).toISOString(),
+		);
 	}
 }

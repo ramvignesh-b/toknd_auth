@@ -41,7 +41,7 @@ export const Layout = (props: { title: string; children: Child; isUnlocked?: boo
 			</head>
 			<body
 				class="bg-base-200/50 min-h-screen font-['DM_Sans',sans-serif] antialiased text-base-content tracking-tight"
-				x-data={`dashboard({ 
+				x-data={`dashboard({
 					initialIsUnlocked: ${props.isUnlocked || false},
 					apiVersion: '${API_VERSION}',
 					appVersion: '${APP_VERSION}',
@@ -445,12 +445,22 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 											</div>
 
 											<div class="divider my-3 opacity-10"></div>
-											<div class="flex justify-between items-center mb-4">
-												<span class="text-xs font-semibold opacity-30 uppercase">Last Updated</span>
-												<span
-													x-text="formatTime(provider.status.lastUpdated)"
-													class="text-xs font-medium opacity-60"
-												></span>
+											<div x-show="provider.status.accessToken" class="space-y-1 mb-4">
+												<div class="flex justify-between items-center">
+													<span class="text-xs font-semibold opacity-30 uppercase">Expires</span>
+													<span
+														x-text="formatExpiry(provider.status.expiresAt)"
+														x-bind:class="isExpired(provider.status.expiresAt) ? 'text-error' : 'text-primary'"
+														class="text-xs font-bold"
+													></span>
+												</div>
+												<div class="flex justify-between items-center">
+													<span class="text-xs font-semibold opacity-30 uppercase">Last Updated</span>
+													<span
+														x-text="formatTime(provider.status.lastUpdated)"
+														class="text-xs font-medium opacity-60"
+													></span>
+												</div>
 											</div>
 
 											<div class="flex flex-col gap-2">

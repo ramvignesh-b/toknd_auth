@@ -1,4 +1,12 @@
 document.addEventListener("alpine:init", () => {
+	const formatDate = (date) => {
+		return date.toLocaleDateString("en-US", {
+			month: "short",
+			day: "2-digit",
+			year: "numeric",
+		});
+	};
+
 	const formatTime = (timestamp) => {
 		if (!timestamp) return "Never";
 		const date = new Date(timestamp);
@@ -7,7 +15,19 @@ document.addEventListener("alpine:init", () => {
 		if (diff < 60) return "Just now";
 		if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
 		if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-		return date.toLocaleDateString();
+		return formatDate(date);
+	};
+
+	const formatExpiry = (timestamp) => {
+		if (!timestamp) return "Expired";
+		const date = new Date(timestamp);
+		const diff = Math.floor((date - Date.now()) / 1000);
+
+		if (diff <= 0) return "Expired";
+		if (diff < 60) return `in ${diff}s`;
+		if (diff < 3600) return `in ${Math.floor(diff / 60)}m`;
+		if (diff < 86400) return `in ${Math.floor(diff / 3600)}h`;
+		return `on ${formatDate(date)}`;
 	};
 
 	window.Alpine.data(
@@ -106,7 +126,12 @@ document.addEventListener("alpine:init", () => {
 				return Object.entries(config).map(([name, cfg]) => ({
 					name,
 					config: cfg,
-					status: status[name] || { accessToken: null, refreshToken: null, lastUpdated: null },
+					status: status[name] || {
+						accessToken: null,
+						refreshToken: null,
+						lastUpdated: null,
+						expiresAt: null,
+					},
 				}));
 			},
 
@@ -233,6 +258,15 @@ document.addEventListener("alpine:init", () => {
 
 			formatTime(timestamp) {
 				return formatTime(timestamp);
+			},
+
+			formatExpiry(timestamp) {
+				return formatExpiry(timestamp);
+			},
+
+			isExpired(timestamp) {
+				if (!timestamp) return true;
+				return new Date(timestamp) < new Date();
 			},
 		}),
 	);
