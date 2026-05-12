@@ -26,7 +26,7 @@ describe("Auth Integration", () => {
 		const location = res.headers.get("Location") || "";
 		expect(location).toContain("trakt.tv/oauth/authorize");
 		expect(location).toContain("client_id=trakt-client-id");
-		expect(location).toContain(`state=${tenantId}:trakt`);
+		expect(location).toContain(`state=${encodeURIComponent(`${tenantId}:trakt`)}`);
 	});
 
 	it("should handle callback and exchange code using tenantId from state", async () => {

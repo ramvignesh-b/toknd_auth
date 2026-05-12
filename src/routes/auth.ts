@@ -23,6 +23,9 @@ const loginRoute = createRoute({
 		params: z.object({
 			provider: z.string().openapi({ example: "trakt" }),
 		}),
+		query: z.object({
+			tenantId: z.string().openapi({ example: "my-tenant" }),
+		}),
 	},
 	responses: {
 		302: {
@@ -42,16 +45,13 @@ const callbackRoute = createRoute({
 	summary: "OAuth2 callback handler (Managed by System)",
 	request: {
 		query: z.object({
-			state: z
-				.string()
-				.openapi({ description: "The provider name (passed as state during login)" }),
+			state: z.string().openapi({ description: "Composite state: tenantId:providerName" }),
 			code: z.string().openapi({ description: "The authorization code from the provider" }),
 		}),
 	},
 	responses: {
-		200: {
-			description: "Success page indicating successful token exchange",
-			content: { "text/html": { schema: { type: "string" } } },
+		302: {
+			description: "Redirect to success page",
 		},
 		400: {
 			content: { "application/json": { schema: AuthErrorResponse } },
@@ -71,6 +71,7 @@ const callbackRoute = createRoute({
 // Implementations
 authRoutes.openapi(loginRoute, async (c) => {
 	const providerName = c.req.valid("param").provider;
+	const tenantId = c.req.valid("query").tenantId;
 	const configManager = new ConfigManager(redis);
 	const providerConfig = await configManager.getProviderConfig(providerName);
 
@@ -88,11 +89,27 @@ authRoutes.openapi(loginRoute, async (c) => {
 	const url = new URL(c.req.url);
 	const redirectUri = providerConfig.redirectUri || `${url.origin}/auth/callback`;
 
-	return c.redirect(provider.getAuthUrl(providerName, redirectUri));
+	// Pass both tenantId and providerName in state
+	const state = `${tenantId}:${providerName}`;
+	return c.redirect(provider.getAuthUrl(state, redirectUri));
 });
 
 authRoutes.openapi(callbackRoute, async (c) => {
-	const { state: providerName, code } = c.req.valid("query");
+	const { state, code } = c.req.valid("query");
+
+	// state is expected to be "tenantId:providerName"
+	const parts = state.split(":");
+	if (parts.length !== 2) {
+		return c.json(
+			{
+				error: "Invalid State",
+				message: "The state parameter is invalid.",
+			},
+			400,
+		);
+	}
+
+	const [tenantId, providerName] = parts;
 
 	const configManager = new ConfigManager(redis);
 	const providerConfig = await configManager.getProviderConfig(providerName);
@@ -115,9 +132,9 @@ authRoutes.openapi(callbackRoute, async (c) => {
 
 	try {
 		const tokens = await provider.exchangeCode(code, redirectUri);
-		await tokenManager.saveTokens(providerName, tokens);
+		await tokenManager.saveTokens(tenantId, providerName, tokens);
 
-		return c.redirect(`/app/success?provider=${providerName}`);
+		return c.redirect(`/app/success?provider=${providerName}&tenantId=${tenantId}`);
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
 		console.error(`[OAuth Error] ${errorMessage}`);
