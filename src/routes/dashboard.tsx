@@ -36,6 +36,9 @@ export const Layout = (props: { title: string; children: Child; isUnlocked?: boo
 						.font-mono {
 							font-family: "DM Mono", monospace;
 						}
+                            .text-xxs {
+                                font-size: 10px;
+                            }
 					`}
 				</style>
 			</head>
@@ -81,7 +84,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 						<i class="ph-duotone ph-book-open text-lg"></i>
 						<span class="font-bold uppercase tracking-widest text-xs">
 							API Reference{" "}
-							<sup class="text-[8px] opacity-50 ml-0.5">
+							<sup class="text-xxs opacity-50 ml-0.5">
 								{API_VERSION}.{APP_VERSION}
 							</sup>
 						</span>
@@ -351,7 +354,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 													<button
 														type="button"
 														x-on:click="deleteProvider(provider.name)"
-														class="btn btn-error btn-xs mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300"
+														class="btn btn-error btn-xs mt-1 opacity-0 group-hover:opacity-40 transition-all duration-300"
 														title="Delete Provider"
 													>
 														<i class="ph-bold ph-trash text-lg"></i>
@@ -445,20 +448,20 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 											</div>
 
 											<div class="divider my-3 opacity-10"></div>
-											<div x-show="provider.status.accessToken" class="space-y-1 mb-4">
-												<div class="flex justify-between items-center">
-													<span class="text-xs font-semibold opacity-30 uppercase">Expires</span>
+											<div x-show="provider.status.accessToken" class="grid grid-cols-2 gap-4 mb-5">
+												<div class="flex flex-col gap-0.5">
+													<span class="text-xxs font-bold opacity-20 uppercase tracking-wide">Last Updated</span>
+													<span
+														x-text="formatTime(provider.status.lastUpdated)"
+														class="text-xs text-secondary/75 font-bold font-mono tracking-wider opacity-60"
+													></span>
+												</div>
+												<div class="flex flex-col gap-0.5 items-end text-right">
+													<span class="text-xxs font-bold opacity-20 uppercase tracking-widest">Expires In</span>
 													<span
 														x-text="formatExpiry(provider.status.expiresAt)"
 														x-bind:class="isExpired(provider.status.expiresAt) ? 'text-error' : 'text-primary'"
-														class="text-xs font-bold"
-													></span>
-												</div>
-												<div class="flex justify-between items-center">
-													<span class="text-xs font-semibold opacity-30 uppercase">Last Updated</span>
-													<span
-														x-text="formatTime(provider.status.lastUpdated)"
-														class="text-xs font-medium opacity-60"
+														class="text-xs font-bold font-mono tracking-wide"
 													></span>
 												</div>
 											</div>

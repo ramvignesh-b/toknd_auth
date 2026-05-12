@@ -24,10 +24,10 @@ document.addEventListener("alpine:init", () => {
 		const diff = Math.floor((date - Date.now()) / 1000);
 
 		if (diff <= 0) return "Expired";
-		if (diff < 60) return `in ${diff}s`;
-		if (diff < 3600) return `in ${Math.floor(diff / 60)}m`;
-		if (diff < 86400) return `in ${Math.floor(diff / 3600)}h`;
-		return `on ${formatDate(date)}`;
+		if (diff < 60) return `${diff}s`;
+		if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+		if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+		return `${formatDate(date)}`;
 	};
 
 	window.Alpine.data(
