@@ -1,12 +1,12 @@
 // @ts-nocheck
-import { afterEach, mock } from "bun:test";
-
-// Global test setup to stub environment variables
 process.env.API_KEY = "test-api-key";
 process.env.REDIS_HOST = "localhost";
 process.env.REDIS_PORT = "6379";
 process.env.APP_PORT = "3000";
 
+import { afterEach, mock } from "bun:test";
+
+// Global config mock
 mock.module("../src/config", () => ({
 	config: {
 		API_KEY: "test-api-key",
@@ -28,9 +28,8 @@ mock.module("../src/core/RedisClient", () => ({
 	},
 }));
 
-import { redis } from "../src/core/RedisClient";
-
-afterEach(() => {
+afterEach(async () => {
+	const { redis } = await import("../src/core/RedisClient");
 	mock.restore();
 	redis.get.mockImplementation(() => Promise.resolve(null));
 	redis.set.mockImplementation(() => Promise.resolve());
