@@ -161,7 +161,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 								<label htmlFor="providerName" class="label py-1">
 									<span class="label-text flex items-center gap-2">
 										Provider ID
-										<span class="tooltip tooltip-top" data-tip="Internal name for this service.">
+										<span class="tooltip tooltip-top before:text-left" data-tip="Internal name for this service. This will define your login URL (e.g. /auth/trakt/login).">
 											<i class="ph ph-info opacity-50 cursor-help"></i>
 										</span>
 									</span>
@@ -182,7 +182,12 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 
 							<div class="form-control">
 								<label htmlFor="clientId" class="label py-1">
-									<span class="label-text">Client ID</span>
+									<span class="label-text flex items-center gap-2">
+										Client ID
+										<span class="tooltip tooltip-top before:text-left" data-tip="Found in the 'API' or 'Developer' section of the provider. Sometimes called 'App ID' or 'Consumer Key'.">
+											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+										</span>
+									</span>
 								</label>
 								<input
 									type="text"
@@ -195,7 +200,12 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 							</div>
 							<div class="form-control" x-data="{ show: false }">
 								<label htmlFor="clientSecret" class="label py-1">
-									<span class="label-text">Client Secret</span>
+									<span class="label-text flex items-center gap-2">
+										Client Secret
+										<span class="tooltip tooltip-top before:text-left" data-tip="Found next to the Client ID. This is your private key—never share it or put it in client-side code.">
+											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+										</span>
+									</span>
 								</label>
 								<div class="relative">
 									<input
@@ -220,7 +230,12 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 
 							<div class="form-control">
 								<label htmlFor="authUrl" class="label py-1">
-									<span class="label-text">Auth URL</span>
+									<span class="label-text flex items-center gap-2">
+										Auth URL
+										<span class="tooltip tooltip-top before:text-left" data-tip="The page where users click 'Authorize'. Usually found in OAuth2 docs under 'Endpoints' or 'Authorize'.">
+											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+										</span>
+									</span>
 								</label>
 								<input
 									type="url"
@@ -233,7 +248,12 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 							</div>
 							<div class="form-control">
 								<label htmlFor="tokenUrl" class="label py-1">
-									<span class="label-text">Token URL</span>
+									<span class="label-text flex items-center gap-2">
+										Token URL
+										<span class="tooltip tooltip-top before:text-left" data-tip="The background API used to trade the code for a token. Usually ends in '/token' or '/access_token'.">
+											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+										</span>
+									</span>
 								</label>
 								<input
 									type="url"
@@ -246,7 +266,12 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 							</div>
 							<div class="form-control">
 								<label htmlFor="redirectUri" class="label py-1">
-									<span class="label-text">Redirect URI</span>
+									<span class="label-text flex items-center gap-2">
+										Redirect URI
+										<span class="tooltip tooltip-top before:text-left" data-tip="The provider will redirect the code to this URI. Copy this URL and paste it into the 'Redirect URI' or 'Callback URL' field in your OAuth provider's settings.">
+											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+										</span>
+									</span>
 								</label>
 								<div class="relative group">
 									<input
@@ -272,7 +297,12 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 							</div>
 							<div class="form-control">
 								<label htmlFor="scope" class="label py-1">
-									<span class="label-text">Scope</span>
+									<span class="label-text flex items-center gap-2">
+										Scope
+										<span class="tooltip tooltip-top before:text-left" data-tip="Determines what data you're allowed to access. Multiple scopes are usually space-separated.">
+											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+										</span>
+									</span>
 								</label>
 								<input
 									type="text"
@@ -302,7 +332,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 						<div class="p-6 pb-4 flex justify-between items-center bg-base-100">
 							<div class="flex items-center gap-2">
 
-                                <i class="ph-duotone ph-shipping-container text-2xl text-primary mb-1"></i>
+                                <i class="ph-duotone ph-shipping-container text-2xl text-primary"></i>
                                 <div class="w-1 h-6 bg-primary/50 rounded-full"></div>
 								<h2 class="card-title text-xl font-semibold">Provider Registry</h2>
 							</div>
