@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from "bun:test";
 import { API_PREFIX } from "../../src/constants";
 import { redis } from "../../src/core/RedisClient";
@@ -23,12 +22,15 @@ describe("Dashboard & Common Integration", () => {
 	});
 
 	it("should return 500 for internal errors", async () => {
-		redis.keys.mockImplementationOnce(() => {
+		(redis.keys as any).mockImplementationOnce(() => {
 			throw new Error("Redis Crash");
 		});
 
 		const res = await app.request(`${API_PREFIX}/status`, {
-			headers: { Authorization: "Bearer test-api-key" },
+			headers: {
+				Authorization: "Bearer test-api-key",
+				"X-Tenant-ID": "test-tenant",
+			},
 		});
 
 		expect(res.status).toBe(500);
