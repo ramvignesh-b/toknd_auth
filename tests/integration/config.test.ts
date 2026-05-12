@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from "bun:test";
 import { API_PREFIX } from "../../src/constants";
 import { redis } from "../../src/core/RedisClient";
@@ -6,8 +5,8 @@ import { app } from "../../src/index";
 
 describe("Config Integration", () => {
 	it("should list all configured providers", async () => {
-		redis.keys.mockReturnValue(Promise.resolve(["config:trakt"]));
-		redis.get.mockImplementation(() =>
+		(redis.keys as any).mockReturnValue(Promise.resolve(["config:trakt"]));
+		(redis.get as any).mockImplementation(() =>
 			Promise.resolve(
 				JSON.stringify({
 					clientId: "trakt-client-id",
@@ -73,7 +72,8 @@ describe("Config Integration", () => {
 		expect(res.status).toBe(400);
 	});
 
-	it("should delete a provider configuration", async () => {
+	it("should delete a provider configuration and clean up all tenant tokens", async () => {
+		(redis.keys as any).mockReturnValue(Promise.resolve(["tenant:1:provider:trakt:token"]));
 		const res = await app.request(`${API_PREFIX}/config/trakt`, {
 			method: "DELETE",
 			headers: {
@@ -82,6 +82,8 @@ describe("Config Integration", () => {
 		});
 
 		expect(res.status).toBe(200);
-		expect(redis.del).toHaveBeenCalled();
+		expect(redis.del).toHaveBeenCalledWith("config:trakt");
+		expect(redis.keys).toHaveBeenCalledWith("tenant:*:provider:trakt:*");
+		expect(redis.del).toHaveBeenCalledWith("tenant:1:provider:trakt:token");
 	});
 });
