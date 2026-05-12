@@ -22,10 +22,17 @@ export const openApiSpec = {
 			description: "System-level OAuth2 handshake and callback processing.",
 		},
 	],
-	security: [{ API_KEY: [] }],
+	security: [{ API_KEY: [], TENANT_ID: [] }],
 };
 
 export const securityScheme = {
 	type: "http",
 	scheme: "bearer",
+} as const;
+
+export const tenantIdScheme = {
+	type: "apiKey",
+	in: "header",
+	name: "X-Tenant-ID",
+	description: "The unique identifier for the tenant (user or organization).",
 } as const;

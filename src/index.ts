@@ -6,7 +6,7 @@ import { prettyJSON } from "hono/pretty-json";
 import { config } from "./config";
 import { API_PREFIX, AUTH_PREFIX, DOCS_PREFIX } from "./constants";
 import { redis } from "./core/RedisClient";
-import { openApiSpec, securityScheme } from "./openapi";
+import { openApiSpec, securityScheme, tenantIdScheme } from "./openapi";
 import { apiRoutes } from "./routes/api";
 import { authRoutes } from "./routes/auth";
 import { configRoutes } from "./routes/config";
@@ -17,6 +17,7 @@ const app = new OpenAPIHono({ strict: false });
 // OpenAPI specs
 app.doc(`${DOCS_PREFIX}/openapi.json`, openApiSpec);
 app.openAPIRegistry.registerComponent("securitySchemes", "API_KEY", securityScheme);
+app.openAPIRegistry.registerComponent("securitySchemes", "TENANT_ID", tenantIdScheme);
 
 // Scalar API Reference
 app.get(

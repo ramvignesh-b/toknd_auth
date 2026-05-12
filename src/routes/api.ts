@@ -54,7 +54,7 @@ const ErrorSchema = z
 const statusRoute = createRoute({
 	method: "get",
 	path: "/status",
-	security: [{ API_KEY: [] }],
+	security: [{ API_KEY: [], TENANT_ID: [] }],
 	tags: ["Tokens"],
 	request: {
 		headers: z.object({
@@ -72,7 +72,7 @@ const statusRoute = createRoute({
 const tokenRoute = createRoute({
 	method: "get",
 	path: "/token/{provider}",
-	security: [{ API_KEY: [] }],
+	security: [{ API_KEY: [], TENANT_ID: [] }],
 	tags: ["Tokens"],
 	request: {
 		params: z.object({
@@ -97,7 +97,7 @@ const tokenRoute = createRoute({
 const refreshRoute = createRoute({
 	method: "post",
 	path: "/refresh/{provider}",
-	security: [{ API_KEY: [] }],
+	security: [{ API_KEY: [], TENANT_ID: [] }],
 	tags: ["Tokens"],
 	request: {
 		params: z.object({
