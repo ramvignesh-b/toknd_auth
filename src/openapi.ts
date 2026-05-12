@@ -6,7 +6,7 @@ export const openApiSpec = {
 		version: `${API_VERSION}.${APP_VERSION}`,
 		title: "toknd Auth Broker API",
 		description:
-			"A high-performance OAuth2 broker and token management service. Designed to centralize provider configurations and automate token lifecycle management across distributed systems.",
+			"A high-performance OAuth2 broker and token management service with multi-tenancy support. Designed to centralize provider configurations and automate token lifecycle management across distributed systems, securely isolated by Tenant IDs.",
 	},
 	tags: [
 		{
