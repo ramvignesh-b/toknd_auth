@@ -34,6 +34,8 @@ document.addEventListener("alpine:init", () => {
 		"dashboard",
 		({ initialIsUnlocked, apiPrefix, authPrefix, docsPrefix, apiVersion, appVersion }) => ({
 			apiKey: "",
+			tenantId: localStorage.getItem("toknd_tenant_id") || "default",
+			isTenantLocked: !!localStorage.getItem("toknd_tenant_id"),
 			isUnlocked: initialIsUnlocked,
 			apiPrefix,
 			authPrefix,
@@ -57,6 +59,9 @@ document.addEventListener("alpine:init", () => {
 			},
 
 			init() {
+				this.$watch("tenantId", (val) => {
+					localStorage.setItem("toknd_tenant_id", val);
+				});
 				if (this.isUnlocked) {
 					this.fetchProviders();
 				}
@@ -104,7 +109,9 @@ document.addEventListener("alpine:init", () => {
 				try {
 					const [configRes, statusRes] = await Promise.all([
 						fetch(`${this.apiPrefix}/config`),
-						fetch(`${this.apiPrefix}/status`),
+						fetch(`${this.apiPrefix}/status`, {
+							headers: { "x-tenant-id": this.tenantId },
+						}),
 					]);
 
 					if (configRes.status === 401 || statusRes.status === 401) {
@@ -180,6 +187,7 @@ document.addEventListener("alpine:init", () => {
 				try {
 					const res = await fetch(`${this.apiPrefix}/refresh/${name}`, {
 						method: "POST",
+						headers: { "x-tenant-id": this.tenantId },
 					});
 
 					if (res.status === 401) {

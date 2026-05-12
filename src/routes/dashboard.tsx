@@ -132,15 +132,41 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 				</template>
 
 				<template x-if="isUnlocked">
-					<button
-						x-on:click="logout()"
-						type="button"
-						class="btn btn-ghost btn-sm text-error hover:bg-error/10 gap-2 px-4"
-						x-bind:disabled="loading"
-					>
-						<i class="ph-bold ph-power text-lg"></i>
-						<span class="font-bold uppercase tracking-wider text-xs">Logout</span>
-					</button>
+					<div class="flex items-center gap-4">
+						<form
+							class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors"
+							x-on:submit="$event.preventDefault(); if(isTenantLocked) { isTenantLocked = false; } else { isTenantLocked = true; fetchProviders(); }"
+						>
+							<div class="join-item flex items-center px-4 bg-base-300 opacity-70">
+								<i class="ph-duotone ph-identification-badge text-xl text-primary"></i>
+							</div>
+							<input
+								type="text"
+								x-model="tenantId"
+								x-bind:disabled="isTenantLocked"
+								placeholder="Enter Tenant ID"
+								class="input join-item input-sm bg-transparent border-none focus:outline-none w-32 md:w-48 text-xs font-mono transition-opacity"
+								x-bind:class="isTenantLocked ? 'opacity-60 cursor-default' : ''"
+							/>
+							<button
+								type="submit"
+								class="btn btn-sm join-item px-4"
+								x-bind:class="isTenantLocked ? 'btn-neutral' : 'btn-secondary'"
+								x-bind:title="isTenantLocked ? 'Edit Tenant ID' : 'Apply Tenant ID'"
+							>
+								<i class="text-lg" x-bind:class="isTenantLocked ? 'ph-thin ph-pencil-simple' : 'ph-bold ph-check'"></i>
+							</button>
+						</form>
+						<button
+							x-on:click="logout()"
+							type="button"
+							class="btn btn-ghost btn-sm text-error hover:bg-error/10 gap-2 px-4"
+							x-bind:disabled="loading"
+						>
+							<i class="ph-bold ph-power text-lg"></i>
+							<span class="font-bold uppercase tracking-wider text-xs">Logout</span>
+						</button>
+					</div>
 				</template>
 			</div>
 		</div>
@@ -527,7 +553,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 												<div class="grid grid-cols-2 gap-2">
 													<button
 														type="button"
-														x-on:click={`window.open('${AUTH_PREFIX}/' + provider.name + '/login', '_blank')`}
+														x-on:click={`window.open('${AUTH_PREFIX}/' + provider.name + '/login?tenantId=' + encodeURIComponent(tenantId), '_blank')`}
 														class="btn btn-primary btn-sm"
 													>
 														<i class="ph-bold ph-link"></i> Connect
