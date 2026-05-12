@@ -150,9 +150,8 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 				<div class="card bg-base-100 shadow-xl border border-base-300 lg:col-span-4 self-start">
 					<div class="card-body p-6">
 						<div class="flex items-center gap-2 mb-4">
-
-                            <i class="ph-duotone ph-shield-plus text-2xl text-primary mb-1"></i>
-                            <div class="w-1 h-6 bg-primary/50 rounded-full"></div>
+							<i class="ph-duotone ph-shield-plus text-2xl text-primary mb-1"></i>
+							<div class="w-1 h-6 bg-primary/50 rounded-full"></div>
 							<h2 class="card-title text-xl font-semibold">Configure Provider</h2>
 						</div>
 
@@ -161,7 +160,10 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 								<label htmlFor="providerName" class="label py-1">
 									<span class="label-text flex items-center gap-2">
 										Provider ID
-										<span class="tooltip tooltip-top before:text-left" data-tip="Internal name for this service. This will define your login URL (e.g. /auth/trakt/login).">
+										<span
+											class="tooltip tooltip-top before:text-left"
+											data-tip="Internal name for this service. This will define your login URL (e.g. /auth/trakt/login)."
+										>
 											<i class="ph ph-info opacity-50 cursor-help"></i>
 										</span>
 									</span>
@@ -184,7 +186,10 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 								<label htmlFor="clientId" class="label py-1">
 									<span class="label-text flex items-center gap-2">
 										Client ID
-										<span class="tooltip tooltip-top before:text-left" data-tip="Found in the 'API' or 'Developer' section of the provider. Sometimes called 'App ID' or 'Consumer Key'.">
+										<span
+											class="tooltip tooltip-top before:text-left"
+											data-tip="Found in the 'API' or 'Developer' section of the provider. Sometimes called 'App ID' or 'Consumer Key'."
+										>
 											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
 										</span>
 									</span>
@@ -202,7 +207,10 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 								<label htmlFor="clientSecret" class="label py-1">
 									<span class="label-text flex items-center gap-2">
 										Client Secret
-										<span class="tooltip tooltip-top before:text-left" data-tip="Found next to the Client ID. This is your private key—never share it or put it in client-side code.">
+										<span
+											class="tooltip tooltip-top before:text-left"
+											data-tip="Found next to the Client ID. This is your private key—never share it or put it in client-side code."
+										>
 											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
 										</span>
 									</span>
@@ -232,7 +240,10 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 								<label htmlFor="authUrl" class="label py-1">
 									<span class="label-text flex items-center gap-2">
 										Auth URL
-										<span class="tooltip tooltip-top before:text-left" data-tip="The page where users click 'Authorize'. Usually found in OAuth2 docs under 'Endpoints' or 'Authorize'.">
+										<span
+											class="tooltip tooltip-top before:text-left"
+											data-tip="The page where users click 'Authorize'. Usually found in OAuth2 docs under 'Endpoints' or 'Authorize'."
+										>
 											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
 										</span>
 									</span>
@@ -250,7 +261,10 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 								<label htmlFor="tokenUrl" class="label py-1">
 									<span class="label-text flex items-center gap-2">
 										Token URL
-										<span class="tooltip tooltip-top before:text-left" data-tip="The background API used to trade the code for a token. Usually ends in '/token' or '/access_token'.">
+										<span
+											class="tooltip tooltip-top before:text-left"
+											data-tip="The background API used to trade the code for a token. Usually ends in '/token' or '/access_token'."
+										>
 											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
 										</span>
 									</span>
@@ -268,7 +282,10 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 								<label htmlFor="redirectUri" class="label py-1">
 									<span class="label-text flex items-center gap-2">
 										Redirect URI
-										<span class="tooltip tooltip-top before:text-left" data-tip="The provider will redirect the code to this URI. Copy this URL and paste it into the 'Redirect URI' or 'Callback URL' field in your OAuth provider's settings.">
+										<span
+											class="tooltip tooltip-top before:text-left"
+											data-tip="The provider will redirect the code to this URI. Copy this URL and paste it into the 'Redirect URI' or 'Callback URL' field in your OAuth provider's settings."
+										>
 											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
 										</span>
 									</span>
@@ -299,7 +316,10 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 								<label htmlFor="scope" class="label py-1">
 									<span class="label-text flex items-center gap-2">
 										Scope
-										<span class="tooltip tooltip-top before:text-left" data-tip="Determines what data you're allowed to access. Multiple scopes are usually space-separated.">
+										<span
+											class="tooltip tooltip-top before:text-left"
+											data-tip="Determines what data you're allowed to access. Multiple scopes are usually space-separated."
+										>
 											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
 										</span>
 									</span>
@@ -331,9 +351,8 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 					<div class="card-body p-0">
 						<div class="p-6 pb-4 flex justify-between items-center bg-base-100">
 							<div class="flex items-center gap-2">
-
-                                <i class="ph-duotone ph-shipping-container text-2xl text-primary"></i>
-                                <div class="w-1 h-6 bg-primary/50 rounded-full"></div>
+								<i class="ph-duotone ph-shipping-container text-2xl text-primary"></i>
+								<div class="w-1 h-6 bg-primary/50 rounded-full"></div>
 								<h2 class="card-title text-xl font-semibold">Provider Registry</h2>
 							</div>
 							<button
@@ -484,14 +503,18 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 											<div class="divider my-3 opacity-10"></div>
 											<div x-show="provider.status.accessToken" class="grid grid-cols-2 gap-4 mb-5">
 												<div class="p-1 flex flex-col gap-0.5">
-													<span class="text-xxs font-bold opacity-20 uppercase tracking-wide">Last Updated</span>
+													<span class="text-xxs font-bold opacity-20 uppercase tracking-wide">
+														Last Updated
+													</span>
 													<span
 														x-text="formatTime(provider.status.lastUpdated)"
 														class="text-xs text-secondary/75 font-bold font-mono tracking-wider opacity-60"
 													></span>
 												</div>
 												<div class="p-1 flex flex-col gap-0.5 items-end text-right">
-													<span class="text-xxs font-bold opacity-20 uppercase tracking-widest">Expires In</span>
+													<span class="text-xxs font-bold opacity-20 uppercase tracking-widest">
+														Expires In
+													</span>
 													<span
 														x-text="formatExpiry(provider.status.expiresAt)"
 														x-bind:class="isExpired(provider.status.expiresAt) ? 'text-error' : 'text-primary'"
