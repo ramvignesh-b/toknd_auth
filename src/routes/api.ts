@@ -56,6 +56,11 @@ const statusRoute = createRoute({
 	path: "/status",
 	security: [{ API_KEY: [] }],
 	tags: ["Tokens"],
+	request: {
+		headers: z.object({
+			"x-tenant-id": z.string().openapi({ example: "my-tenant" }),
+		}),
+	},
 	responses: {
 		200: {
 			content: { "application/json": { schema: StatusResponseSchema } },
@@ -72,6 +77,9 @@ const tokenRoute = createRoute({
 	request: {
 		params: z.object({
 			provider: z.string().openapi({ example: "trakt" }),
+		}),
+		headers: z.object({
+			"x-tenant-id": z.string().openapi({ example: "my-tenant" }),
 		}),
 	},
 	responses: {
@@ -95,6 +103,9 @@ const refreshRoute = createRoute({
 		params: z.object({
 			provider: z.string().openapi({ example: "trakt" }),
 		}),
+		headers: z.object({
+			"x-tenant-id": z.string().openapi({ example: "my-tenant" }),
+		}),
 	},
 	responses: {
 		200: {
@@ -112,15 +123,17 @@ const refreshRoute = createRoute({
 apiRoutes.use("*", authMiddleware);
 
 apiRoutes.openapi(statusRoute, async (c) => {
+	const tenantId = c.req.valid("header")["x-tenant-id"];
 	const configManager = new ConfigManager(redis);
 	const providers = await configManager.getAllProviders();
 	const status: z.infer<typeof StatusResponseSchema> = {};
 
 	for (const provider of Object.keys(providers)) {
-		const accessToken = await redis.get(`provider:${provider}:access_token`);
-		const refreshToken = await redis.get(`provider:${provider}:refresh_token`);
-		const lastUpdated = await redis.get(`provider:${provider}:last_updated`);
-		const expiresAt = await redis.get(`provider:${provider}:expires_at`);
+		const baseKey = `tenant:${tenantId}:provider:${provider}`;
+		const accessToken = await redis.get(`${baseKey}:access_token`);
+		const refreshToken = await redis.get(`${baseKey}:refresh_token`);
+		const lastUpdated = await redis.get(`${baseKey}:last_updated`);
+		const expiresAt = await redis.get(`${baseKey}:expires_at`);
 		status[provider] = { accessToken, refreshToken, lastUpdated, expiresAt };
 	}
 
@@ -129,6 +142,7 @@ apiRoutes.openapi(statusRoute, async (c) => {
 
 apiRoutes.openapi(tokenRoute, async (c) => {
 	const providerName = c.req.valid("param").provider;
+	const tenantId = c.req.valid("header")["x-tenant-id"];
 	const configManager = new ConfigManager(redis);
 	const providerConfig = await configManager.getProviderConfig(providerName);
 
@@ -139,7 +153,7 @@ apiRoutes.openapi(tokenRoute, async (c) => {
 	const provider = new GenericProvider(providerName, providerConfig);
 	const tokenManager = new TokenManager(redis, provider);
 
-	const accessToken = await tokenManager.getAccessToken(providerName);
+	const accessToken = await tokenManager.getAccessToken(tenantId, providerName);
 	if (!accessToken) {
 		return c.json({ error: "No tokens found for provider" }, 404);
 	}
@@ -148,6 +162,7 @@ apiRoutes.openapi(tokenRoute, async (c) => {
 
 apiRoutes.openapi(refreshRoute, async (c) => {
 	const providerName = c.req.valid("param").provider;
+	const tenantId = c.req.valid("header")["x-tenant-id"];
 	const configManager = new ConfigManager(redis);
 	const providerConfig = await configManager.getProviderConfig(providerName);
 
@@ -158,11 +173,12 @@ apiRoutes.openapi(refreshRoute, async (c) => {
 	const provider = new GenericProvider(providerName, providerConfig);
 	const tokenManager = new TokenManager(redis, provider);
 
-	await tokenManager.refreshAccessToken(providerName);
-	const accessToken = await redis.get(`provider:${providerName}:access_token`);
-	const refreshToken = await redis.get(`provider:${providerName}:refresh_token`);
-	const lastUpdated = await redis.get(`provider:${providerName}:last_updated`);
-	const expiresAt = await redis.get(`provider:${providerName}:expires_at`);
+	await tokenManager.refreshAccessToken(tenantId, providerName);
+	const baseKey = `tenant:${tenantId}:provider:${providerName}`;
+	const accessToken = await redis.get(`${baseKey}:access_token`);
+	const refreshToken = await redis.get(`${baseKey}:refresh_token`);
+	const lastUpdated = await redis.get(`${baseKey}:last_updated`);
+	const expiresAt = await redis.get(`${baseKey}:expires_at`);
 
 	return c.json(
 		{
