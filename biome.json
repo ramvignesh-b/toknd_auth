@@ -65,9 +65,6 @@
 	"overrides": [
 		{
 			"includes": ["tests/**/*"],
-			"javascript": {
-				"globals": ["API_PREFIX", "AUTH_PREFIX"]
-			},
 			"linter": {
 				"rules": {
 					"suspicious": {

@@ -1,10 +1,5 @@
 // @ts-nocheck
 import { afterEach, mock } from "bun:test";
-import { API_PREFIX, AUTH_PREFIX } from "../src/constants";
-
-// Make prefixes global for easier testing
-globalThis.API_PREFIX = API_PREFIX;
-globalThis.AUTH_PREFIX = AUTH_PREFIX;
 
 // Global test setup to stub environment variables
 process.env.API_KEY = "test-api-key";

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { describe, expect, it } from "bun:test";
+import { API_PREFIX } from "../../src/constants";
 import { redis } from "../../src/core/RedisClient";
 import { app } from "../../src/index";
 
