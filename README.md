@@ -1,82 +1,113 @@
-# toknd — Auth Broker
+# toknd — The Minimal Token Broker
+
 ![Dashboard Screenshot](.docs/screenshot.png)
 
-**toknd** is a minimal, centralized authentication and token broker. Built with **Bun**, **Hono**, and **Redis**, it serves as a middleware layer that manages OAuth2 providers, token persistence, and automatic refreshes, allowing your applications to focus on their core logic.
+Building integrations is fun until you have to manage the tokens. Suddenly, you're writing cron jobs to handle refresh cycles, dealing with expired sessions in the middle of background tasks, and copying OAuth secrets manually across multiple microservices.
+
+If you are building AI agents that need to take actions in the real world, the absolute last thing you want is your LLM trying to debug an OAuth redirect flow.
+
+**toknd** is a minimal, centralized authentication and auth token broker and middleware. Built with **Bun**, **Hono**, and **Redis**, it acts as a secure "wallet" that sits between your applications and the external APIs they need to access.
+
+You just need to authenticate once. toknd manages the lifecycle of the tokens forever.
+
+---
+
+## Why does this exist?
+
+There are massive enterprise identity brokers (like Auth0 or Dex), and then there are reverse proxies (like oauth2-proxy). **toknd** is built to bridge the gap while remaining minimal and open-source. It provides the lightweight, developer-friendly infrastructure of a proxy, but with the specific "Token Vault" capabilities required for modern AI and microservice architectures—without the bloat, vendor lock-in, or SaaS costs.
+
+## Use-Cases
+- **The Ultimate AI Agent Wallet:** Equip your autonomous agents with a secure keychain. When your agent needs to hit a service backed by oauth, like GitHub or Notion API, it just asks toknd for a token. It gets a short-lived Bearer token instantly, keeping your permanent secrets completely isolated from dynamic AI environments.
+- **Set It and Forget It:** toknd handles automated background refreshes. Your data ingestion pipelines, RAG syncs, and headless integration workers will never stall out due to a `401 Unauthorized` error again.
+- **Microservice Centralization:** Stop implementing OAuth in every new service. Centralize your credentials so your microservices only need one internal API key to request valid access tokens for any configured provider.
+- **Secure Secret Isolation:** OAuth client IDs, secrets, and long-lived refresh tokens stay locked inside toknd's Redis vault, drastically reducing your attack surface. All you need to do is secure the store.
 
 ## Features
 
-- Centralized management for multiple OAuth2 providers (Google, Trakt, GitHub, etc.).
-- Automatic token refreshes.
-- Secure and isolated API access via API key authentication.
-- Web-based dashboard for configuration management.
-- Docker Compose support for simplified deployment.
-- High performance and low-latency powered by Bun and Redis.
+- **Drop-in Infrastructure:** Deploys in seconds via Docker (or Podman) Compose or just a simple Bun script.
+- **Centralized Provider Management:** Native support for managing multiple OAuth2 providers (Google, GitHub, Trakt, etc.).
+- **API Key Security:** Isolated and secure access to the broker via master API keys. Each instance can use its own key for isolation.
+- **Web Dashboard:** Built-in clean ad modern UI for managing provider configurations and viewing live token statuses.
+- **Blisteringly Fast:** Powered by Bun and Redis for ultra-low latency token retrieval.
 
 ## Tech Stack
 
 - **Runtime**: [Bun](https://bun.sh/)
 - **Web Framework**: [Hono](https://hono.dev/)
-- **Data Store**: Redis
-- **Styling**: Tailwind CSS & DaisyUI
-- **Schema & Validation**: Zod
+- **Data Store**: [Redis](https://redis.io/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [DaisyUI](https://daisyui.com/)
+- **Schema & Validation**: [Zod](https://zod.dev/)
+- **Docs**: [Scalar](https://github.com/scalar/scalar)
+
+---
 
 ## Getting Started
 
-toknd can be deployed either as a containerized service or self-hosted directly on your hardware.
+toknd is designed to be too easy to set-up. You can deploy it as a containerized service or host it directly on bare metal.
 
 ### 1. Environment Setup
-Clone the repository and create your environment file:
+Clone the repository and set up your environment:
 ```bash
+git clone https://git.ramvignesh.dev/toknd_auth.git
+cd toknd
 cp .env.example .env
 ```
-Define a strong `API_KEY` and ensure `REDIS_URL` points to a valid Redis instance.
+Open `.env`, define your own strong `API_KEY`, and map the ports (optional)
 
 ### 2. Choose Deployment Method
 
-#### Option A: Containerized (Recommended)
-This is the easiest way to get up and running, as it bundles the application and a Redis instance together.
+#### Option A: Docker Compose (Recommended)
+The easiest way to get up and running. This spins up both toknd and a dedicated Redis instance.
 
-- **Development (with Hot-Reload)**:
-  ```bash
-  podman compose up --build
-  ```
 - **Production**:
   ```bash
   docker compose up -d --build
+  (or)
+  podman compose up -d --build
   ```
 
-#### Option B: Self-Hosting (Bare Metal)
-Ideal for lightweight deployments or custom environments where you already have Bun and Redis.
+
+#### Option B: Bare Metal
+If you already have Bun and Redis running in your environment.
 
 1. **Install Dependencies**:
    ```bash
    bun install
    ```
 2. **Start the Server**:
-   - **Development**: `bun run dev` (with hot-reload)
    - **Production**: `bun run start`
-   *Note: Ensure your Redis server is running and accessible via the `REDIS_URL` in your `.env`.*
+   - **Development**: `bun run dev`
+
+   *Note: Make sure your Redis server is running and accessible via the `HOST` and `PORT` in your `.env`.*
 
 ---
 
-## API Reference
+## Usage & API Reference
 
-toknd provides a built-in **Scalar API Reference** that allows you to explore and test all endpoints directly from your browser.
+toknd provides a built-in **Scalar API Reference** so you can explore and test endpoints right from your browser.
 
 - **Interactive UI**: [http://localhost:3000/api](http://localhost:3000/api) (or `/docs`)
-- **OpenAPI Spec (JSON)**: [http://localhost:3000/doc](http://localhost:3000/doc)
+- **OpenAPI Spec**: [http://localhost:3000/doc](http://localhost:3000/doc)
 
-All protected endpoints require a Bearer token in the `Authorization` header:
-`Authorization: Bearer <your_master_api_key>`
+### The Golden Rule
+All protected endpoints require your master API key in the Authorization header:
+```http
+Authorization: Bearer <your_master_api_key>
+```
 
-### Core Concepts
-- **Token Brokerage**: Automated access token retrieval and background refreshes for all configured providers.
-- **Provider Management**: Register and manage OAuth2 providers via the Dashboard or the configuration API.
+### The Dashboard
+REST API too complicated to use? No problem!
+You absolutely don't have to manage everything via curl. Access the web dashboard to configure providers, trigger manual refreshes, and monitor token health:
+**`http://localhost:3000/app`**
 
-## Dashboard
-Access the **toknd** dashboard at:
-`http://localhost:3000/app`
-
-The dashboard allows you to manage provider configurations, view live token statuses, and manually trigger refreshes. Authenticate using your **Master API Key**.
+*(Authenticate using your Master API Key).*
 
 ---
+
+## Contributing
+
+This is an open-source passion project built to solve a real headache in modern application architecture. Pull requests, issues, and feature requests (especially for new built-in OAuth providers!) are highly encouraged.
+
+## License
+
+MIT
