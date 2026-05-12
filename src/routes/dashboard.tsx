@@ -150,7 +150,9 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 				<div class="card bg-base-100 shadow-xl border border-base-300 lg:col-span-4 self-start">
 					<div class="card-body p-6">
 						<div class="flex items-center gap-2 mb-4">
-							<div class="w-2 h-6 bg-primary rounded-full"></div>
+
+                            <i class="ph-duotone ph-shield-plus text-2xl text-primary mb-1"></i>
+                            <div class="w-1 h-6 bg-primary/50 rounded-full"></div>
 							<h2 class="card-title text-xl font-semibold">Configure Provider</h2>
 						</div>
 
@@ -299,7 +301,9 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 					<div class="card-body p-0">
 						<div class="p-6 pb-4 flex justify-between items-center bg-base-100">
 							<div class="flex items-center gap-2">
-								<div class="w-2 h-6 bg-primary rounded-full"></div>
+
+                                <i class="ph-duotone ph-shipping-container text-2xl text-primary mb-1"></i>
+                                <div class="w-1 h-6 bg-primary/50 rounded-full"></div>
 								<h2 class="card-title text-xl font-semibold">Provider Registry</h2>
 							</div>
 							<button
