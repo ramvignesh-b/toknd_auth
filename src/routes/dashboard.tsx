@@ -63,524 +63,555 @@ export const Layout = (props: { title: string; children: Child; isUnlocked?: boo
 
 export const Dashboard = (props: { isUnlocked: boolean }) => (
 	<Layout title="toknd — Auth Broker Dashboard" isUnlocked={props.isUnlocked}>
-		<div class="navbar bg-base-100 shadow-sm px-4 md:px-8 border-b border-base-300">
-			<div class="flex-1 flex items-center gap-6">
-				<div class="flex items-center gap-2">
-					<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-semibold text-lg">
-						<i class="ph-duotone ph-fingerprint"></i>
-					</div>
-					<div class="text-xl font-semibold tracking-tight">
-						toknd <span class="text-xs font-normal opacity-50 ml-1">auth broker</span>
+		<div class="flex flex-col min-h-screen">
+			<div class="navbar bg-base-100 shadow-sm px-4 md:px-8 border-b border-base-300 relative z-50">
+				<div class="flex-1 flex items-center gap-6">
+					<div class="flex items-center gap-2">
+						<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-semibold text-lg">
+							<i class="ph-duotone ph-fingerprint"></i>
+						</div>
+						<div class="text-xl font-semibold tracking-tight">
+							toknd <span class="text-xs font-normal opacity-50 ml-1">auth broker</span>
+						</div>
 					</div>
 				</div>
 
-				<nav class="hidden md:flex items-center gap-1">
+				<div class="flex-none lg:hidden">
+					<label for="mobile-menu" class="btn btn-square btn-ghost">
+						<i class="ph-duotone ph-chart-donut text-3xl"></i>
+					</label>
+				</div>
+
+				<input type="checkbox" id="mobile-menu" class="peer hidden" />
+
+				<div class="fixed inset-y-0 right-0 w-80 bg-base-100 border-l border-base-300 shadow-2xl p-6 flex flex-col gap-6 transform translate-x-full peer-checked:translate-x-0 transition-transform z-50 lg:static lg:flex-none lg:w-auto lg:bg-transparent lg:border-none lg:shadow-none lg:p-0 lg:flex-row lg:items-center lg:gap-4 lg:translate-x-0 lg:z-auto">
+					<div class="flex justify-end lg:hidden">
+						<label for="mobile-menu" class="btn btn-ghost btn-square">
+							<i class="ph-bold ph-circle-dashed text-2xl"></i>
+						</label>
+					</div>
+
 					<a
 						href={DOCS_PREFIX}
 						target="_blank"
-						class="btn btn-ghost btn-sm text-base-content/60 hover:text-primary gap-2 px-3"
+						class="btn btn-ghost justify-start lg:justify-center lg:btn-sm text-base-content/60 hover:text-primary gap-3 lg:gap-2 w-full lg:w-auto px-3"
 						rel="noopener"
 					>
 						<i class="ph-duotone ph-book-open text-lg"></i>
-						<span class="font-bold uppercase tracking-widest text-xs">
-							API Reference{" "}
+						<span class="font-bold uppercase tracking-widest">
+							API Reference
 							<sup class="text-xxs opacity-50 ml-0.5">
 								{API_VERSION}.{APP_VERSION}
 							</sup>
 						</span>
 					</a>
-				</nav>
-			</div>
-			<div class="flex-none hidden sm:flex">
-				<template x-if="!isUnlocked">
-					<div class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
-						<div class="join-item flex items-center px-4 bg-base-200">
-							<i class="ph-duotone ph-key text-secondary text-lg"></i>
-						</div>
-						<div class="relative flex-1" x-data="{ show: false }">
-							<input
-								x-bind:type="show ? 'text' : 'password'"
-								id="apiKey"
-								name="apiKey"
-								x-model="apiKey"
-								aria-label="Master API Key"
-								placeholder="API_KEY"
-								class="input join-item input-sm bg-transparent border-none focus:outline-none w-48 lg:w-64 text-xs pr-10 font-mono"
-							/>
-							<button
-								type="button"
-								x-on:click="show = !show"
-								class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
-							>
-								<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
-							</button>
-						</div>
-						<button
-							x-on:click="unlock()"
-							type="submit"
-							class="btn btn-primary btn-sm join-item px-6"
-							x-bind:disabled="loading"
-						>
-							<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
-							<span class="loading loading-spinner loading-xs" x-show="loading"></span>
-							<span
-								class="ml-1 hidden md:inline"
-								x-text="loading ? 'Unlocking...' : 'Unlock'"
-							></span>
-						</button>
-					</div>
-				</template>
 
-				<template x-if="isUnlocked">
-					<div class="flex items-center gap-4">
-						<form
-							class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors"
-							x-on:submit="$event.preventDefault(); if(isTenantLocked) { isTenantLocked = false; } else { isTenantLocked = true; fetchProviders(); }"
-						>
-							<div class="join-item flex items-center px-4 bg-base-300 opacity-70">
-								<i class="ph-duotone ph-identification-badge text-xl text-primary"></i>
-							</div>
-							<input
-								type="text"
-								x-model="tenantId"
-								x-bind:disabled="isTenantLocked"
-								placeholder="Enter Tenant ID"
-								class="input join-item input-sm bg-transparent border-none focus:outline-none w-32 md:w-48 text-xs font-mono transition-opacity"
-								x-bind:class="isTenantLocked ? 'opacity-60 cursor-default' : ''"
-							/>
-							<button
-								type="submit"
-								class="btn btn-sm join-item px-4"
-								x-bind:class="isTenantLocked ? 'btn-neutral' : 'btn-secondary'"
-								x-bind:title="isTenantLocked ? 'Edit Tenant ID' : 'Apply Tenant ID'"
-							>
-								<i class="text-lg" x-bind:class="isTenantLocked ? 'ph-thin ph-pencil-simple' : 'ph-bold ph-check'"></i>
-							</button>
-						</form>
-						<button
-							x-on:click="logout()"
-							type="button"
-							class="btn btn-ghost btn-sm text-error hover:bg-error/10 gap-2 px-4"
-							x-bind:disabled="loading"
-						>
-							<i class="ph-bold ph-power text-lg"></i>
-							<span class="font-bold uppercase tracking-wider text-xs">Logout</span>
-						</button>
-					</div>
-				</template>
-			</div>
-		</div>
+					<div class="divider my-0 opacity-50 lg:hidden"></div>
 
-		<div class="container mx-auto p-4 md:p-8 max-w-7xl">
-			<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-				<div class="card bg-base-100 shadow-xl border border-base-300 lg:col-span-4 self-start">
-					<div class="card-body p-6">
-						<div class="flex items-center gap-2 mb-4">
-							<i class="ph-duotone ph-shield-plus text-2xl text-primary mb-1"></i>
-							<div class="w-1 h-6 bg-primary/50 rounded-full"></div>
-							<h2 class="card-title text-xl font-semibold">Configure Provider</h2>
-						</div>
-
-						<form x-on:submit="saveConfig" class="space-y-4">
-							<div class="form-control">
-								<label htmlFor="providerName" class="label py-1">
-									<span class="label-text flex items-center gap-2">
-										Provider ID
-										<span
-											class="tooltip tooltip-top before:text-left"
-											data-tip="Internal name for this service. This will define your login URL (e.g. /auth/trakt/login)."
-										>
-											<i class="ph ph-info opacity-50 cursor-help"></i>
-										</span>
-									</span>
-								</label>
-								<input
-									type="text"
-									id="providerName"
-									x-model="form.providerName"
-									placeholder="e.g. trakt"
-									required
-									class="input input-bordered w-full focus:input-primary"
-								/>
-							</div>
-
-							<div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">
-								Credentials
-							</div>
-
-							<div class="form-control">
-								<label htmlFor="clientId" class="label py-1">
-									<span class="label-text flex items-center gap-2">
-										Client ID
-										<span
-											class="tooltip tooltip-top before:text-left"
-											data-tip="Found in the 'API' or 'Developer' section of the provider. Sometimes called 'App ID' or 'Consumer Key'."
-										>
-											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
-										</span>
-									</span>
-								</label>
-								<input
-									type="text"
-									id="clientId"
-									x-model="form.clientId"
-									placeholder="OAuth client id"
-									required
-									class="input input-bordered w-full focus:input-primary"
-								/>
-							</div>
-							<div class="form-control" x-data="{ show: false }">
-								<label htmlFor="clientSecret" class="label py-1">
-									<span class="label-text flex items-center gap-2">
-										Client Secret
-										<span
-											class="tooltip tooltip-top before:text-left"
-											data-tip="Found next to the Client ID. This is your private key—never share it or put it in client-side code."
-										>
-											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
-										</span>
-									</span>
-								</label>
-								<div class="relative">
+					<template x-if="!isUnlocked">
+						<div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center w-full lg:w-auto">
+							<div class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors w-full lg:w-auto">
+								<div class="join-item flex items-center px-4 bg-base-200">
+									<i class="ph-duotone ph-key text-secondary text-lg"></i>
+								</div>
+								<div class="relative flex-1" x-data="{ show: false }">
 									<input
 										x-bind:type="show ? 'text' : 'password'"
-										id="clientSecret"
-										x-model="form.clientSecret"
-										placeholder="OAuth client secret"
-										required
-										class="input input-bordered w-full focus:input-primary pr-12"
+										id="apiKey"
+										name="apiKey"
+										x-model="apiKey"
+										aria-label="Master API Key"
+										placeholder="API_KEY"
+										class="input join-item input-sm bg-transparent border-none focus:outline-none w-full lg:w-64 text-xs pr-10 font-mono"
 									/>
 									<button
 										type="button"
 										x-on:click="show = !show"
-										class="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
+										class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
 									>
-										<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-lg opacity-40' : 'ph-duotone ph-eye text-lg opacity-40'"></i>
+										<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
 									</button>
 								</div>
-							</div>
-
-							<div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">Endpoints</div>
-
-							<div class="form-control">
-								<label htmlFor="authUrl" class="label py-1">
-									<span class="label-text flex items-center gap-2">
-										Auth URL
-										<span
-											class="tooltip tooltip-top before:text-left"
-											data-tip="The page where users click 'Authorize'. Usually found in OAuth2 docs under 'Endpoints' or 'Authorize'."
-										>
-											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
-										</span>
-									</span>
-								</label>
-								<input
-									type="url"
-									id="authUrl"
-									x-model="form.authUrl"
-									placeholder="https://trakt.tv/oauth/authorize"
-									required
-									class="input input-bordered w-full focus:input-primary"
-								/>
-							</div>
-							<div class="form-control">
-								<label htmlFor="tokenUrl" class="label py-1">
-									<span class="label-text flex items-center gap-2">
-										Token URL
-										<span
-											class="tooltip tooltip-top before:text-left"
-											data-tip="The background API used to trade the code for a token. Usually ends in '/token' or '/access_token'."
-										>
-											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
-										</span>
-									</span>
-								</label>
-								<input
-									type="url"
-									id="tokenUrl"
-									x-model="form.tokenUrl"
-									placeholder="https://api.trakt.tv/oauth/token"
-									required
-									class="input input-bordered w-full focus:input-primary"
-								/>
-							</div>
-							<div class="form-control">
-								<label htmlFor="redirectUri" class="label py-1">
-									<span class="label-text flex items-center gap-2">
-										Redirect URI
-										<span
-											class="tooltip tooltip-top before:text-left"
-											data-tip="The provider will redirect the code to this URI. Copy this URL and paste it into the 'Redirect URI' or 'Callback URL' field in your OAuth provider's settings."
-										>
-											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
-										</span>
-									</span>
-								</label>
-								<div class="relative group">
-									<input
-										type="url"
-										id="redirectUri"
-										x-bind:value="getRedirectUri()"
-										readonly
-										class="input input-bordered w-full pr-12 focus:outline-none cursor-default opacity-80"
-									/>
-									<button
-										type="button"
-										x-on:click="copyToClipboard(getRedirectUri())"
-										class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors"
-									>
-										<i class="ph-duotone ph-copy text-lg"></i>
-									</button>
-								</div>
-								<div class="label py-0.5">
-									<span class="label-text-alt opacity-40 italic text-xs">
-										Must match provider's callback URL
-									</span>
-								</div>
-							</div>
-							<div class="form-control">
-								<label htmlFor="scope" class="label py-1">
-									<span class="label-text flex items-center gap-2">
-										Scope
-										<span
-											class="tooltip tooltip-top before:text-left"
-											data-tip="Determines what data you're allowed to access. Multiple scopes are usually space-separated."
-										>
-											<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
-										</span>
-									</span>
-								</label>
-								<input
-									type="text"
-									id="scope"
-									x-model="form.scope"
-									placeholder="public"
-									class="input input-bordered w-full focus:input-primary"
-								/>
-							</div>
-
-							<div class="card-actions pt-4">
 								<button
+									x-on:click="unlock(); document.getElementById('mobile-menu').checked = false;"
 									type="submit"
-									class="btn btn-primary w-full shadow-md"
+									class="btn btn-primary btn-sm join-item px-6"
 									x-bind:disabled="loading"
 								>
-									<i class="ph ph-plus-bold mr-1"></i>
-									Save Configuration
+									<i class="ph-duotone ph-lock-key-open text-lg" x-show="!loading"></i>
+									<span class="loading loading-spinner loading-xs" x-show="loading"></span>
+									<span
+										class="ml-1 hidden lg:inline"
+										x-text="loading ? 'Unlocking...' : 'Unlock'"
+									></span>
 								</button>
 							</div>
-						</form>
-					</div>
-				</div>
+						</div>
+					</template>
 
-				<div class="card bg-base-100 shadow-xl border border-base-300 lg:col-span-8 overflow-hidden">
-					<div class="card-body p-0">
-						<div class="p-6 pb-4 flex justify-between items-center bg-base-100">
-							<div class="flex items-center gap-2">
-								<i class="ph-duotone ph-shipping-container text-2xl text-primary"></i>
-								<div class="w-1 h-6 bg-primary/50 rounded-full"></div>
-								<h2 class="card-title text-xl font-semibold">Provider Registry</h2>
-							</div>
-							<button
-								type="button"
-								x-on:click="fetchProviders()"
-								class="btn btn-sm btn-neutral"
-								x-bind:disabled="!isUnlocked || loading"
+					<template x-if="isUnlocked">
+						<div class="flex flex-col lg:flex-row items-start lg:items-center gap-4 w-full lg:w-auto">
+							<form
+								class="join border border-base-200/50 bg-base-200/50 rounded-xl overflow-hidden focus-within:border-primary transition-colors w-full lg:w-auto"
+								x-on:submit="$event.preventDefault(); if(isTenantLocked) { isTenantLocked = false; } else { isTenantLocked = true; fetchProviders(); document.getElementById('mobile-menu').checked = false; }"
 							>
-								<i x-bind:class="loading ? 'ph ph-arrows-clockwise animate-spin mr-1' : 'ph ph-arrows-clockwise mr-1'"></i>
-								Refresh List
+								<div class="join-item flex items-center px-4 bg-base-300 opacity-70">
+									<i class="ph-duotone ph-identification-badge text-xl text-primary"></i>
+								</div>
+								<input
+									type="text"
+									x-model="tenantId"
+									x-bind:readonly="isTenantLocked"
+									placeholder="Tenant ID"
+									class="input join-item input-sm bg-transparent border-none focus:outline-none flex-1 lg:flex-none lg:w-48 text-xs font-mono transition-opacity"
+									x-bind:class="isTenantLocked ? 'opacity-60 cursor-default' : ''"
+								/>
+								<button
+									type="submit"
+									class="btn btn-sm join-item px-4"
+									x-bind:class="isTenantLocked ? 'btn-neutral' : 'btn-secondary'"
+									x-bind:title="isTenantLocked ? 'Edit Tenant ID' : 'Apply Tenant ID'"
+								>
+									<i
+										class="text-lg"
+										x-bind:class="isTenantLocked ? 'ph-thin ph-pencil-simple' : 'ph-bold ph-check'"
+									></i>
+								</button>
+							</form>
+
+							<button
+								x-on:click="logout(); document.getElementById('mobile-menu').checked = false;"
+								type="button"
+								class="btn btn-ghost text-error hover:bg-error/10 gap-2 w-full lg:w-auto lg:btn-sm px-4 justify-start lg:justify-center"
+								x-bind:disabled="loading"
+							>
+								<i class="ph-bold ph-power text-lg"></i>
+								<span class="font-bold uppercase tracking-wider text-xs">Logout</span>
 							</button>
 						</div>
+					</template>
+				</div>
+				<div
+					class="fixed inset-0 bg-black/50 z-40 hidden peer-checked:block lg:hidden"
+				></div>
+			</div>
 
-						<div class="relative min-h-[400px]">
-							<div
-								x-show="loading && providers.length > 0"
-								class="absolute inset-0 bg-base-100/50 backdrop-blur-md z-10 flex items-center justify-center"
-							>
-								<span class="loading loading-spinner loading-lg text-primary"></span>
+			<div class="container mx-auto p-4 md:p-8 max-w-7xl">
+				<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+					<div class="card bg-base-100 shadow-xl border border-base-300 lg:col-span-4 self-start">
+						<div class="card-body p-6">
+							<div class="flex items-center gap-2 mb-4">
+								<i class="ph-duotone ph-shield-plus text-2xl text-primary mb-1"></i>
+								<div class="w-1 h-6 bg-primary/50 rounded-full"></div>
+								<h2 class="card-title text-xl font-semibold">Configure Provider</h2>
 							</div>
 
-							<div x-show="!isUnlocked" class="p-20 text-center opacity-30">
-								<div class="flex flex-col items-center gap-3">
-									<i class="ph ph-lock-key text-6xl"></i>
-									<p class="font-medium">Enter Master API Key to access registry</p>
+							<form x-on:submit="saveConfig" class="space-y-4">
+								<div class="form-control">
+									<label htmlFor="providerName" class="label py-1">
+										<span class="label-text flex items-center gap-2">
+											Provider ID
+											<span
+												class="tooltip tooltip-top before:text-left"
+												data-tip="Internal name for this service. This will define your login URL (e.g. /auth/trakt/login)."
+											>
+												<i class="ph ph-info opacity-50 cursor-help"></i>
+											</span>
+										</span>
+									</label>
+									<input
+										type="text"
+										id="providerName"
+										x-model="form.providerName"
+										placeholder="e.g. trakt"
+										required
+										class="input input-bordered w-full focus:input-primary"
+									/>
 								</div>
-							</div>
 
-							<div
-								x-show="isUnlocked && providers.length === 0 && !loading"
-								class="p-20 text-center opacity-30"
-							>
-								<div class="flex flex-col items-center gap-3">
-									<i class="ph ph-folder-open text-6xl"></i>
-									<p class="font-medium">No providers configured yet</p>
+								<div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">
+									Credentials
 								</div>
+
+								<div class="form-control">
+									<label htmlFor="clientId" class="label py-1">
+										<span class="label-text flex items-center gap-2">
+											Client ID
+											<span
+												class="tooltip tooltip-top before:text-left"
+												data-tip="Found in the 'API' or 'Developer' section of the provider. Sometimes called 'App ID' or 'Consumer Key'."
+											>
+												<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+											</span>
+										</span>
+									</label>
+									<input
+										type="text"
+										id="clientId"
+										x-model="form.clientId"
+										placeholder="OAuth client id"
+										required
+										class="input input-bordered w-full focus:input-primary"
+									/>
+								</div>
+								<div class="form-control" x-data="{ show: false }">
+									<label htmlFor="clientSecret" class="label py-1">
+										<span class="label-text flex items-center gap-2">
+											Client Secret
+											<span
+												class="tooltip tooltip-top before:text-left"
+												data-tip="Found next to the Client ID. This is your private key—never share it or put it in client-side code."
+											>
+												<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+											</span>
+										</span>
+									</label>
+									<div class="relative">
+										<input
+											x-bind:type="show ? 'text' : 'password'"
+											id="clientSecret"
+											x-model="form.clientSecret"
+											placeholder="OAuth client secret"
+											required
+											class="input input-bordered w-full focus:input-primary pr-12"
+										/>
+										<button
+											type="button"
+											x-on:click="show = !show"
+											class="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square"
+										>
+											<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-lg opacity-40' : 'ph-duotone ph-eye text-lg opacity-40'"></i>
+										</button>
+									</div>
+								</div>
+
+								<div class="divider text-xs opacity-50 my-2 uppercase tracking-widest">
+									Endpoints
+								</div>
+
+								<div class="form-control">
+									<label htmlFor="authUrl" class="label py-1">
+										<span class="label-text flex items-center gap-2">
+											Auth URL
+											<span
+												class="tooltip tooltip-top before:text-left"
+												data-tip="The page where users click 'Authorize'. Usually found in OAuth2 docs under 'Endpoints' or 'Authorize'."
+											>
+												<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+											</span>
+										</span>
+									</label>
+									<input
+										type="url"
+										id="authUrl"
+										x-model="form.authUrl"
+										placeholder="https://trakt.tv/oauth/authorize"
+										required
+										class="input input-bordered w-full focus:input-primary"
+									/>
+								</div>
+								<div class="form-control">
+									<label htmlFor="tokenUrl" class="label py-1">
+										<span class="label-text flex items-center gap-2">
+											Token URL
+											<span
+												class="tooltip tooltip-top before:text-left"
+												data-tip="The background API used to trade the code for a token. Usually ends in '/token' or '/access_token'."
+											>
+												<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+											</span>
+										</span>
+									</label>
+									<input
+										type="url"
+										id="tokenUrl"
+										x-model="form.tokenUrl"
+										placeholder="https://api.trakt.tv/oauth/token"
+										required
+										class="input input-bordered w-full focus:input-primary"
+									/>
+								</div>
+								<div class="form-control">
+									<label htmlFor="redirectUri" class="label py-1">
+										<span class="label-text flex items-center gap-2">
+											Redirect URI
+											<span
+												class="tooltip tooltip-top before:text-left"
+												data-tip="The provider will redirect the code to this URI. Copy this URL and paste it into the 'Redirect URI' or 'Callback URL' field in your OAuth provider's settings."
+											>
+												<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+											</span>
+										</span>
+									</label>
+									<div class="relative group">
+										<input
+											type="url"
+											id="redirectUri"
+											x-bind:value="getRedirectUri()"
+											readonly
+											class="input input-bordered w-full pr-12 focus:outline-none cursor-default opacity-80"
+										/>
+										<button
+											type="button"
+											x-on:click="copyToClipboard(getRedirectUri())"
+											class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors"
+										>
+											<i class="ph-duotone ph-copy text-lg"></i>
+										</button>
+									</div>
+									<div class="label py-0.5">
+										<span class="label-text-alt opacity-40 italic text-xs">
+											Must match provider's callback URL
+										</span>
+									</div>
+								</div>
+								<div class="form-control">
+									<label htmlFor="scope" class="label py-1">
+										<span class="label-text flex items-center gap-2">
+											Scope
+											<span
+												class="tooltip tooltip-top before:text-left"
+												data-tip="Determines what data you're allowed to access. Multiple scopes are usually space-separated."
+											>
+												<i class="ph ph-info opacity-50 cursor-help text-xs"></i>
+											</span>
+										</span>
+									</label>
+									<input
+										type="text"
+										id="scope"
+										x-model="form.scope"
+										placeholder="public"
+										class="input input-bordered w-full focus:input-primary"
+									/>
+								</div>
+
+								<div class="card-actions pt-4">
+									<button
+										type="submit"
+										class="btn btn-primary w-full shadow-md"
+										x-bind:disabled="loading"
+									>
+										<i class="ph ph-plus-bold mr-1"></i>
+										Save Configuration
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<div class="card bg-base-100 shadow-xl border border-base-300 lg:col-span-8 overflow-hidden">
+						<div class="card-body p-0">
+							<div class="p-6 pb-4 flex justify-between items-center bg-base-100">
+								<div class="flex items-center gap-2">
+									<i class="ph-duotone ph-shipping-container text-2xl text-primary"></i>
+									<div class="w-1 h-6 bg-primary/50 rounded-full"></div>
+									<h2 class="card-title text-xl font-semibold">Provider Registry</h2>
+								</div>
+								<button
+									type="button"
+									x-on:click="fetchProviders()"
+									class="btn btn-sm btn-neutral"
+									x-bind:disabled="!isUnlocked || loading"
+								>
+									<i x-bind:class="loading ? 'ph ph-arrows-clockwise animate-spin mr-1' : 'ph ph-arrows-clockwise mr-1'"></i>
+									Refresh List
+								</button>
 							</div>
 
-							<div
-								x-show="isUnlocked && providers.length > 0"
-								class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4"
-							>
-								<template x-for="provider in providers" x-bind:key="provider.name">
-									<div class="card bg-base-200/50 border border-base-300 shadow-sm hover:shadow-md transition-all group">
-										<div class="card-body p-5">
-											<div class="flex flex-col mb-4">
-												<div class="flex justify-between items-start">
-													<span
-														x-text="provider.name"
-														class="text-lg font-black text-base-content/90 uppercase"
-													></span>
-													<button
-														type="button"
-														x-on:click="deleteProvider(provider.name)"
-														class="btn btn-error btn-xs mt-1 opacity-0 group-hover:opacity-40 transition-all duration-300"
-														title="Delete Provider"
-													>
-														<i class="ph-bold ph-trash text-lg"></i>
-													</button>
-												</div>
-												<span
-													x-text="provider.config.clientId"
-													x-bind:title="provider.config.clientId"
-													class="text-xs opacity-40 truncate font-mono"
-												></span>
-											</div>
+							<div class="relative min-h-[400px]">
+								<div
+									x-show="loading && providers.length > 0"
+									class="absolute inset-0 bg-base-100/50 backdrop-blur-md z-10 flex items-center justify-center"
+								>
+									<span class="loading loading-spinner loading-lg text-primary"></span>
+								</div>
 
-											<div class="space-y-4">
-												<div x-data="{ show: false }">
-													<div class="text-xs uppercase font-semibold opacity-30 block mb-1">
-														Access Token
+								<div x-show="!isUnlocked" class="p-20 text-center opacity-30">
+									<div class="flex flex-col items-center gap-3">
+										<i class="ph ph-lock-key text-6xl"></i>
+										<p class="font-medium">Enter Master API Key to access registry</p>
+									</div>
+								</div>
+
+								<div
+									x-show="isUnlocked && providers.length === 0 && !loading"
+									class="p-20 text-center opacity-30"
+								>
+									<div class="flex flex-col items-center gap-3">
+										<i class="ph ph-folder-open text-6xl"></i>
+										<p class="font-medium">No providers configured yet</p>
+									</div>
+								</div>
+
+								<div
+									x-show="isUnlocked && providers.length > 0"
+									class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4"
+								>
+									<template x-for="provider in providers" x-bind:key="provider.name">
+										<div class="card bg-base-200/50 border border-base-300 shadow-sm hover:shadow-md transition-all group">
+											<div class="card-body p-5">
+												<div class="flex flex-col mb-4">
+													<div class="flex justify-between items-start">
+														<span
+															x-text="provider.name"
+															class="text-lg font-black text-base-content/90 uppercase"
+														></span>
+														<button
+															type="button"
+															x-on:click="deleteProvider(provider.name)"
+															class="btn btn-error btn-xs mt-1 opacity-0 group-hover:opacity-40 transition-all duration-300"
+															title="Delete Provider"
+														>
+															<i class="ph-bold ph-trash text-lg"></i>
+														</button>
 													</div>
-													<div
-														x-show="provider.status.accessToken"
-														class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3"
-													>
-														<input
-															x-bind:type="show ? 'text' : 'password'"
-															x-bind:value="provider.status.accessToken"
-															readonly
-															class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono"
-														/>
-														<div class="flex gap-1">
-															<button
-																type="button"
-																x-on:click="show = !show"
-																class="btn btn-ghost btn-xs btn-square"
-															>
-																<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
-															</button>
-															<button
-																type="button"
-																x-on:click="copyToClipboard(provider.status.accessToken)"
-																class="btn btn-ghost btn-xs btn-square"
-															>
-																<i class="ph-duotone ph-copy-simple text-base opacity-50"></i>
-															</button>
+													<span
+														x-text="provider.config.clientId"
+														x-bind:title="provider.config.clientId"
+														class="text-xs opacity-40 truncate font-mono"
+													></span>
+												</div>
+
+												<div class="space-y-4">
+													<div x-data="{ show: false }">
+														<div class="text-xs uppercase font-semibold opacity-30 block mb-1">
+															Access Token
+														</div>
+														<div
+															x-show="provider.status.accessToken"
+															class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3"
+														>
+															<input
+																x-bind:type="show ? 'text' : 'password'"
+																x-bind:value="provider.status.accessToken"
+																readonly
+																class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono"
+															/>
+															<div class="flex gap-1">
+																<button
+																	type="button"
+																	x-on:click="show = !show"
+																	class="btn btn-ghost btn-xs btn-square"
+																>
+																	<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
+																</button>
+																<button
+																	type="button"
+																	x-on:click="copyToClipboard(provider.status.accessToken)"
+																	class="btn btn-ghost btn-xs btn-square"
+																>
+																	<i class="ph-duotone ph-copy-simple text-base opacity-50"></i>
+																</button>
+															</div>
+														</div>
+														<div
+															x-show="!provider.status.accessToken"
+															class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40"
+														>
+															Not Authenticated
 														</div>
 													</div>
-													<div
-														x-show="!provider.status.accessToken"
-														class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40"
-													>
-														Not Authenticated
-													</div>
-												</div>
 
-												<div x-data="{ show: false }">
-													<div class="text-xs uppercase font-semibold opacity-30 block mb-1">
-														Refresh Token
-													</div>
-													<div
-														x-show="provider.status.refreshToken"
-														class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3"
-													>
-														<input
-															x-bind:type="show ? 'text' : 'password'"
-															x-bind:value="provider.status.refreshToken"
-															readonly
-															class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono"
-														/>
-														<div class="flex gap-1">
-															<button
-																type="button"
-																x-on:click="show = !show"
-																class="btn btn-ghost btn-xs btn-square"
-															>
-																<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
-															</button>
-															<button
-																type="button"
-																x-on:click="copyToClipboard(provider.status.refreshToken)"
-																class="btn btn-ghost btn-xs btn-square"
-															>
-																<i class="ph-duotone ph-copy-simple text-base opacity-50"></i>
-															</button>
+													<div x-data="{ show: false }">
+														<div class="text-xs uppercase font-semibold opacity-30 block mb-1">
+															Refresh Token
+														</div>
+														<div
+															x-show="provider.status.refreshToken"
+															class="flex items-center gap-2 bg-base-100 rounded border border-base-300 p-1 pl-3"
+														>
+															<input
+																x-bind:type="show ? 'text' : 'password'"
+																x-bind:value="provider.status.refreshToken"
+																readonly
+																class="bg-transparent border-none outline-none shadow-none focus:ring-0 text-xs flex-1 min-w-0 font-mono"
+															/>
+															<div class="flex gap-1">
+																<button
+																	type="button"
+																	x-on:click="show = !show"
+																	class="btn btn-ghost btn-xs btn-square"
+																>
+																	<i x-bind:class="show ? 'ph-duotone ph-eye-slash text-base opacity-50' : 'ph-duotone ph-eye text-base opacity-50'"></i>
+																</button>
+																<button
+																	type="button"
+																	x-on:click="copyToClipboard(provider.status.refreshToken)"
+																	class="btn btn-ghost btn-xs btn-square"
+																>
+																	<i class="ph-duotone ph-copy-simple text-base opacity-50"></i>
+																</button>
+															</div>
+														</div>
+														<div
+															x-show="!provider.status.refreshToken"
+															class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40"
+														>
+															Not Authenticated
 														</div>
 													</div>
-													<div
-														x-show="!provider.status.refreshToken"
-														class="h-8 flex items-center px-3 bg-base-300/30 rounded text-xs italic opacity-40"
-													>
-														Not Authenticated
-													</div>
 												</div>
-											</div>
 
-											<div class="divider my-3 opacity-10"></div>
-											<div x-show="provider.status.accessToken" class="grid grid-cols-2 gap-4 mb-5">
-												<div class="p-1 flex flex-col gap-0.5">
-													<span class="text-xxs font-bold opacity-20 uppercase tracking-wide">
-														Last Updated
-													</span>
-													<span
-														x-text="formatTime(provider.status.lastUpdated)"
-														class="text-xs text-secondary/75 font-bold font-mono tracking-wider opacity-60"
-													></span>
-												</div>
-												<div class="p-1 flex flex-col gap-0.5 items-end text-right">
-													<span class="text-xxs font-bold opacity-20 uppercase tracking-widest">
-														Expires In
-													</span>
-													<span
-														x-text="formatExpiry(provider.status.expiresAt)"
-														x-bind:class="isExpired(provider.status.expiresAt) ? 'text-error' : 'text-primary'"
-														class="text-xs font-bold font-mono tracking-wide"
-													></span>
-												</div>
-											</div>
-
-											<div class="flex flex-col gap-2">
-												<div class="grid grid-cols-2 gap-2">
-													<button
-														type="button"
-														x-on:click={`window.open('${AUTH_PREFIX}/' + provider.name + '/login?tenantId=' + encodeURIComponent(tenantId), '_blank')`}
-														class="btn btn-primary btn-sm"
-													>
-														<i class="ph-bold ph-link"></i> Connect
-													</button>
-													<button
-														type="button"
-														x-on:click="editProvider(provider)"
-														class="btn btn-neutral btn-sm"
-													>
-														<i class="ph-bold ph-pencil-simple"></i> Edit
-													</button>
-												</div>
-												<button
-													type="button"
-													x-on:click="forceRefresh(provider.name)"
-													class="btn btn-secondary w-full"
-													x-bind:disabled="loading || !provider.status.accessToken"
+												<div class="divider my-3 opacity-10"></div>
+												<div
+													x-show="provider.status.accessToken"
+													class="grid grid-cols-2 gap-4 mb-5"
 												>
-													<i class="ph-bold ph-arrows-clockwise text-base mr-1"></i>
-													<span class="text-xs uppercase font-bold tracking-widest">
-														Refresh Tokens
-													</span>
-												</button>
+													<div class="p-1 flex flex-col gap-0.5">
+														<span class="text-xxs font-bold opacity-20 uppercase tracking-wide">
+															Last Updated
+														</span>
+														<span
+															x-text="formatTime(provider.status.lastUpdated)"
+															class="text-xs text-secondary/75 font-bold font-mono tracking-wider opacity-60"
+														></span>
+													</div>
+													<div class="p-1 flex flex-col gap-0.5 items-end text-right">
+														<span class="text-xxs font-bold opacity-20 uppercase tracking-widest">
+															Expires In
+														</span>
+														<span
+															x-text="formatExpiry(provider.status.expiresAt)"
+															x-bind:class="isExpired(provider.status.expiresAt) ? 'text-error' : 'text-primary'"
+															class="text-xs font-bold font-mono tracking-wide"
+														></span>
+													</div>
+												</div>
+
+												<div class="flex flex-col gap-2">
+													<div class="grid grid-cols-2 gap-2">
+														<button
+															type="button"
+															x-on:click={`window.open('${AUTH_PREFIX}/' + provider.name + '/login?tenantId=' + encodeURIComponent(tenantId), '_blank')`}
+															class="btn btn-primary btn-sm"
+														>
+															<i class="ph-bold ph-link"></i> Connect
+														</button>
+														<button
+															type="button"
+															x-on:click="editProvider(provider)"
+															class="btn btn-neutral btn-sm"
+														>
+															<i class="ph-bold ph-pencil-simple"></i> Edit
+														</button>
+													</div>
+													<button
+														type="button"
+														x-on:click="forceRefresh(provider.name)"
+														class="btn btn-secondary w-full"
+														x-bind:disabled="loading || !provider.status.accessToken"
+													>
+														<i class="ph-bold ph-arrows-clockwise text-base mr-1"></i>
+														<span class="text-xs uppercase font-bold tracking-widest">
+															Refresh Tokens
+														</span>
+													</button>
+												</div>
 											</div>
 										</div>
-									</div>
-								</template>
+									</template>
+								</div>
 							</div>
 						</div>
 					</div>
