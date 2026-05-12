@@ -6,17 +6,18 @@ Building integrations is fun until you have to manage the tokens. Suddenly, you'
 
 If you are building AI agents that need to take actions in the real world, the absolute last thing you want is your LLM trying to debug an OAuth redirect flow.
 
-**toknd** is a minimal, centralized authentication and auth token broker and middleware. Built with **Bun**, **Hono**, and **Redis**, it acts as a secure "wallet" that sits between your applications and the external APIs they need to access.
+**toknd** is a minimal, centralized authentication and auth token broker and middleware with **native multi-tenancy**. Built with **Bun**, **Hono**, and **Redis**, it acts as a secure "wallet" that sits between your applications and the external APIs they need to access.
 
-You just need to authenticate once. toknd manages the lifecycle of the tokens forever.
+You just need to authenticate once. toknd manages the lifecycle of the tokens forever, securely isolated by tenant.
 
 ---
 
 ## Why does this exist?
 
-There are massive enterprise identity brokers (like Auth0 or Dex), and then there are reverse proxies (like oauth2-proxy). **toknd** is built to bridge the gap while remaining minimal and open-source. It provides the lightweight, developer-friendly infrastructure of a proxy, but with the specific "Token Vault" capabilities required for modern AI and microservice architectures—without the bloat, vendor lock-in, or SaaS costs.
+There are massive enterprise identity brokers (like Auth0 or Dex), and then there are reverse proxies (like oauth2-proxy). **toknd** is built to bridge the gap while remaining minimal and open-source. It provides the lightweight, developer-friendly infrastructure of a proxy, but with the specific "Token Vault" and **Multi-Tenancy** capabilities required for modern AI and microservice architectures—without the bloat, vendor lock-in, or SaaS costs.
 
 ## Use-Cases
+- **Multi-Tenant SaaS Platforms:** If you are building a platform where *your* users need to connect their own GitHub or Google accounts, toknd handles the isolation. Use a unique `tenantId` for each of your customers to keep their credentials safe and separate.
 - **The Ultimate AI Agent Wallet:** Equip your autonomous agents with a secure keychain. When your agent needs to hit a service backed by oauth, like GitHub or Notion API, it just asks toknd for a token. It gets a short-lived Bearer token instantly, keeping your permanent secrets completely isolated from dynamic AI environments.
 - **Set It and Forget It:** toknd handles automated background refreshes. Your data ingestion pipelines, RAG syncs, and headless integration workers will never stall out due to a `401 Unauthorized` error again.
 - **Microservice Centralization:** Stop implementing OAuth in every new service. Centralize your credentials so your microservices only need one internal API key to request valid access tokens for any configured provider.
@@ -24,6 +25,7 @@ There are massive enterprise identity brokers (like Auth0 or Dex), and then ther
 
 ## Features
 
+- **Native Multi-Tenancy:** Isolate tokens for unlimited users/tenants using a single instance.
 - **Drop-in Infrastructure:** Deploys in seconds via Docker (or Podman) Compose or just a simple Bun script.
 - **Centralized Provider Management:** Native support for managing multiple OAuth2 providers (Google, GitHub, Trakt, etc.).
 - **API Key Security:** Isolated and secure access to the broker via master API keys. Each instance can use its own key for isolation.
@@ -89,11 +91,20 @@ toknd provides a built-in **Scalar API Reference** so you can explore and test e
 - **Interactive UI**: [http://localhost:3000/api](http://localhost:3000/api) (or `/docs`)
 - **OpenAPI Spec**: [http://localhost:3000/doc](http://localhost:3000/doc)
 
-### The Golden Rule
-All protected endpoints require your master API key in the Authorization header:
+### Multi-Tenancy & The Golden Rule
+All protected endpoints require your master API key and a **Tenant ID** for isolation:
+
+1. **Authentication:** Use your API key in the `Authorization` header.
+2. **Isolation:** Pass your unique tenant identifier in the `X-Tenant-ID` header.
+
 ```http
 Authorization: Bearer <your_master_api_key>
+X-Tenant-ID: <unique_user_or_org_id>
 ```
+
+### Starting an OAuth Flow
+To connect a new account for a specific tenant, redirect the user to:
+`http://localhost:3000/v1/auth/{provider}/login?tenantId={your_tenant_id}`
 
 ### The Dashboard
 REST API too complicated to use? No problem!
