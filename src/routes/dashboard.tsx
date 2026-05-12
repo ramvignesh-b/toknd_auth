@@ -305,7 +305,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 							<button
 								type="button"
 								x-on:click="fetchProviders()"
-								class="btn btn-sm btn-base"
+								class="btn btn-sm btn-neutral"
 								x-bind:disabled="!isUnlocked || loading"
 							>
 								<i x-bind:class="loading ? 'ph ph-arrows-clockwise animate-spin mr-1' : 'ph ph-arrows-clockwise mr-1'"></i>
@@ -449,14 +449,14 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 
 											<div class="divider my-3 opacity-10"></div>
 											<div x-show="provider.status.accessToken" class="grid grid-cols-2 gap-4 mb-5">
-												<div class="flex flex-col gap-0.5">
+												<div class="p-1 flex flex-col gap-0.5">
 													<span class="text-xxs font-bold opacity-20 uppercase tracking-wide">Last Updated</span>
 													<span
 														x-text="formatTime(provider.status.lastUpdated)"
 														class="text-xs text-secondary/75 font-bold font-mono tracking-wider opacity-60"
 													></span>
 												</div>
-												<div class="flex flex-col gap-0.5 items-end text-right">
+												<div class="p-1 flex flex-col gap-0.5 items-end text-right">
 													<span class="text-xxs font-bold opacity-20 uppercase tracking-widest">Expires In</span>
 													<span
 														x-text="formatExpiry(provider.status.expiresAt)"
@@ -478,7 +478,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 													<button
 														type="button"
 														x-on:click="editProvider(provider)"
-														class="btn btn-secondary btn-sm"
+														class="btn btn-neutral btn-sm"
 													>
 														<i class="ph-bold ph-pencil-simple"></i> Edit
 													</button>
@@ -486,7 +486,7 @@ export const Dashboard = (props: { isUnlocked: boolean }) => (
 												<button
 													type="button"
 													x-on:click="forceRefresh(provider.name)"
-													class="btn btn-base w-full"
+													class="btn btn-secondary w-full"
 													x-bind:disabled="loading || !provider.status.accessToken"
 												>
 													<i class="ph-bold ph-arrows-clockwise text-base mr-1"></i>
