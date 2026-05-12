@@ -34,6 +34,8 @@ app.use("*", prettyJSON());
 
 app.get("/", (c) => c.redirect("/app"));
 
+app.get("/favicon.ico", serveStatic({ path: "./public/favicon.ico" }));
+app.use("/static/*", serveStatic({ root: "./public" }));
 app.get("/app/dashboard.js", serveStatic({ path: "./src/views/dashboard.js" }));
 app.route(AUTH_PREFIX, authRoutes);
 app.route(`${API_PREFIX}/config`, configRoutes);
