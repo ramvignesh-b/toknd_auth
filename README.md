@@ -59,12 +59,33 @@ Open `.env`, define your own strong `API_KEY`, and map the ports (optional)
 #### Option A: Docker Compose (Recommended)
 The easiest way to get up and running. This spins up both toknd and a dedicated Redis instance.
 
-- **Production**:
-  ```bash
-  docker compose up -d --build
-  (or)
-  podman compose up -d --build
-  ```
+You can run toknd by building the container locally or by pulling the pre-built image from the **GitHub Container Registry (GHCR)**.
+
+##### Using Pre-built Image (GHCR)
+Instead of building locally, you can pull the pre-built image. Update the `app` service in `docker-compose.yml` to pull the image:
+
+```yaml
+services:
+  app:
+    image: ghcr.io/ramvignesh-b/toknd:latest
+    # build: .  # Comment or remove this line
+```
+
+Then start the services:
+```bash
+docker compose up -d
+(or)
+podman compose up -d
+```
+
+##### Building from Source
+If you prefer to build the image locally:
+```bash
+docker compose up -d --build
+(or)
+podman compose up -d --build
+```
+
 
 
 #### Option B: Bare Metal
